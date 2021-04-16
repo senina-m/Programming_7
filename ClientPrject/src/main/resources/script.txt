@@ -1,0 +1,15 @@
+execute_script C:\Users\senin\Desktop\ITMO\Programming\Programming_6lab\ClientPrject\src\main\resources\script.txt
+add
+new
+76
+0
+2
+new
+2
+VERY_EASY
+new
+3
+3
+3
+show
+exit

@@ -1,0 +1,19 @@
+[ {
+  "creationDate" : "2021-04-13T01:07:01.889169",
+  "id" : 1681063883,
+  "name" : "new lab",
+  "coordinates" : {
+    "x" : 1,
+    "y" : 1
+  },
+  "minimalPoint" : 1.0,
+  "description" : "server-client programming lab",
+  "averagePoint" : 5,
+  "difficulty" : "HOPELESS",
+  "discipline" : {
+    "name" : "Programming",
+    "lectureHours" : 15,
+    "practiceHours" : 15,
+    "selfStudyHours" : 10000
+  }
+} ]

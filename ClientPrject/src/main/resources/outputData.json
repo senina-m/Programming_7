@@ -1,0 +1,56 @@
+{"list" : [ {
+    "creationDate" : "2021-03-01T13:32:53.3527715",
+    "id" : 295515307,
+    "name" : "element",
+    "coordinates" : {
+      "x" : 2,
+      "y" : 3
+    },
+    "minimalPoint" : 80.0,
+    "description" : "KT subject",
+    "averagePoint" : 9,
+    "difficulty" : "HOPELESS",
+    "discipline" : {
+      "name" : "Algosy",
+      "lectureHours" : 30,
+      "practiceHours" : 55,
+      "selfStudyHours" : 10
+    }
+  }, {
+    "creationDate" : "2021-03-01T13:32:53.3537712",
+    "id" : 296610695,
+    "name" : "element",
+    "coordinates" : {
+      "x" : 55,
+      "y" : 67
+    },
+    "minimalPoint" : 60.0,
+    "description" : "VT subject",
+    "averagePoint" : 7,
+    "difficulty" : "VERY_EASY",
+    "discipline" : {
+      "name" : "OPD",
+      "lectureHours" : 35,
+      "practiceHours" : 0,
+      "selfStudyHours" : 10000
+    }
+  }, {
+    "creationDate" : "2021-03-01T13:33:20.2585466",
+    "id" : 841768746,
+    "name" : "new",
+    "coordinates" : {
+      "x" : 0,
+      "y" : 0
+    },
+    "minimalPoint" : 1.0,
+    "description" : "new",
+    "averagePoint" : 1,
+    "difficulty" : "HOPELESS",
+    "discipline" : {
+      "name" : "new",
+      "lectureHours" : 1,
+      "practiceHours" : 1,
+      "selfStudyHours" : 1
+    }
+  } ]
+}
