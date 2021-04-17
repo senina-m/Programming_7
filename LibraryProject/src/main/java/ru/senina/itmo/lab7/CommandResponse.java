@@ -1,7 +1,8 @@
 package ru.senina.itmo.lab7;
 
 public class CommandResponse {
-    private  int commandNumber;
+    //todo: do i need an arguments field here? may be later
+    private  int code;
     private  String response;
     private  String commandName;
     private  int exceptionCode = 0;
@@ -10,14 +11,14 @@ public class CommandResponse {
     public CommandResponse() {
     }
 
-    public CommandResponse(int commandNumber, String commandName, String response) {
+    public CommandResponse(int code, String commandName, String response) {
         this.commandName = commandName;
-        this.commandNumber = commandNumber;
+        this.code = code;
         this.response = response;
     }
 
-    public void setCommandNumber(int commandNumber) {
-        this.commandNumber = commandNumber;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public void setResponse(String response) {
@@ -44,7 +45,7 @@ public class CommandResponse {
         return response;
     }
 
-    public int getCommandNumber() {
-        return commandNumber;
+    public int getCode() {
+        return code;
     }
 }

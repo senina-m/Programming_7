@@ -3,6 +3,7 @@ package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
 import ru.senina.itmo.lab7.CollectionKeeperParser;
+import ru.senina.itmo.lab7.CommandResponse;
 
 @CommandAnnotation(name = "exit", collectionKeeper = true, parser = true)
 public class ExitCommand extends CommandWithoutArgs{
@@ -21,7 +22,7 @@ public class ExitCommand extends CommandWithoutArgs{
     }
 
     @Override
-    protected String doRun() {
-        return parser.fromObjectToString(collectionKeeper);
+    protected CommandResponse doRun() {
+        return new CommandResponse(1, getName(), parser.fromObjectToString(collectionKeeper));
     }
 }

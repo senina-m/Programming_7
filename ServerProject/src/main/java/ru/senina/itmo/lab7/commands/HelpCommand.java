@@ -1,5 +1,7 @@
 package ru.senina.itmo.lab7.commands;
 
+import ru.senina.itmo.lab7.CommandResponse;
+
 import java.util.Map;
 
 /**
@@ -16,13 +18,13 @@ public class HelpCommand extends CommandWithoutArgs {
     }
 
     @Override
-    public String doRun() {
+    public CommandResponse doRun() {
         StringBuilder string = new StringBuilder();
         string.append("The full list of Commands is here: \n");
         for(Command command: commands.values()){
             string.append(command.getName()).append(" : ").append(command.getDescription()).append("\n");
         }
-        return string.toString();
+        return new CommandResponse(1, getName(), string.toString());
     }
 
     public Map<String, Command> getCommands() {

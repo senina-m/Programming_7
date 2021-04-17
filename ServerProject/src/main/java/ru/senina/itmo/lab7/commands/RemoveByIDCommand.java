@@ -1,6 +1,7 @@
 package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
+import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
 
 /**
@@ -20,8 +21,8 @@ public class RemoveByIDCommand extends Command {
     }
 
     @Override
-    protected String doRun(){
-        return collectionKeeper.removeById(id);
+    protected CommandResponse doRun(){
+        return new CommandResponse(1, getName(), collectionKeeper.removeById(id));
     }
 
     @Override

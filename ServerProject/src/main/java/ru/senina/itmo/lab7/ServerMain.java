@@ -10,7 +10,13 @@ public class ServerMain {
 
     public static void main(String[] args) {
         try {
-            ServerKeeper serverKeeper = new ServerKeeper();
+            final ServerKeeper serverKeeper = new ServerKeeper();
+            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    serverKeeper.stop();
+                }
+            }));
             serverKeeper.start(Integer.parseInt(args[0]));
         } catch (NumberFormatException e) {
             Logging.log(Level.WARNING, "Incorrect port given to start! It has to be int number!\nSet port in arguments line!");

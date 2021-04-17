@@ -1,13 +1,11 @@
 package ru.senina.itmo.lab7.commands;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import ru.senina.itmo.lab7.CollectionKeeper;
-import ru.senina.itmo.lab7.CommandArgs;
+import ru.senina.itmo.lab7.*;
 import ru.senina.itmo.lab7.labwork.LabWork;
-import ru.senina.itmo.lab7.CollectionKeeperParser;
 
 /**
- * Parent of all ru.senina.itmo.lab6.commands classes
+ * Parent of all commands classes
  */
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
@@ -39,8 +37,9 @@ public abstract class Command {
         return args;
     }
 
-    public String run() {
+    public CommandResponse run() {
         validateArguments();
+        checkIfLogin();
         return doRun();
     }
 
@@ -49,7 +48,7 @@ public abstract class Command {
      *
      * @return value to print in output like the result of command execute
      */
-    protected abstract String doRun();
+    protected abstract CommandResponse doRun();
 
     /**
      * Arguments validation method
@@ -71,5 +70,9 @@ public abstract class Command {
     }
 
     public void setParser(CollectionKeeperParser parser) {
+    }
+
+    protected void checkIfLogin() throws UnLoginUserException {
+        //todo: check if token is correct
     }
 }

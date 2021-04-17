@@ -2,6 +2,7 @@ package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
 import ru.senina.itmo.lab7.CollectionKeeperParser;
+import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.parser.ParsingException;
 
 /**
@@ -26,17 +27,17 @@ public class ShowCommand extends CommandWithoutArgs{
     }
 
     @Override
-    protected String doRun(){
+    protected CommandResponse doRun(){
         try {
             if(collectionKeeper.getAmountOfElements()!= 0) {
                 collectionKeeper.sort();
-                return parser.fromCollectionToStringElements(collectionKeeper);
+                return new CommandResponse(1, getName(), parser.fromCollectionToStringElements(collectionKeeper));
             } else {
-                return "No elements in collection.";
+                return new CommandResponse(2, getName(), "No elements in collection.");
             }
         }
         catch (ParsingException e){
-            return "Parsing was failed. " + e.getMessage();
+            return new CommandResponse(3, getName(), "Parsing was failed. " + e.getMessage());
         }
     }
 }

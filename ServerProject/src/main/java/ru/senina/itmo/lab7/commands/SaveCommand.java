@@ -2,6 +2,7 @@ package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
 import ru.senina.itmo.lab7.CollectionKeeperParser;
+import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.parser.Parser;
 
 /**
@@ -27,8 +28,8 @@ public class SaveCommand extends CommandWithoutArgs {
     }
 
     @Override
-    protected String doRun() {
+    protected CommandResponse doRun() {
         Parser.writeStringToFile(filename, parser.fromObjectToString(collectionKeeper));
-        return "Collection was successfully saved to " + filename + " file.";
+        return new CommandResponse(1, getName(), "Collection was successfully saved to " + filename + " file.");
     }
 }

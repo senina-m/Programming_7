@@ -1,6 +1,7 @@
 package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
+import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.labwork.LabWork;
 
 /**
@@ -20,8 +21,8 @@ public class RemoveGreaterCommand extends CommandWithoutArgs{
     }
 
     @Override
-    protected String doRun() {
-        return collectionKeeper.removeGreater(element);
+    protected CommandResponse doRun() {
+        return new CommandResponse(1, getName(), collectionKeeper.removeGreater(element));
     }
 
     public LabWork getElement() {

@@ -34,15 +34,15 @@ public class CreateCollectionCommand extends Command {
     }
 
     @Override
-    protected String doRun() throws InvalidArgumentsException {
+    protected CommandResponse doRun() throws InvalidArgumentsException {
         try {
             collectionKeeper.setList(parser.fromStringToObject(collectionString).getList());
         } catch (ParsingException e) {
             Logging.log(Level.WARNING, "Collection file was incorrect, collection wasn't updated with start values.");
-            return "File was incorrect, collection will be empty!";
+            return new CommandResponse(2, getName(), "File was incorrect, collection will be empty!");
         }
         if (collectionKeeper.getList() != null) {
-            return "Collection was successfully created";
+            return new CommandResponse(1, getName(), "Collection was successfully created");
         } else {
             throw new InvalidArgumentsException("File " + collectionString + " was invalid.");
         }

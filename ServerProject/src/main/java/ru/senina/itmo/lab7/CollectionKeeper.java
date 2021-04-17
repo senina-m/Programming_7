@@ -130,6 +130,7 @@ public class CollectionKeeper{
      * @return String result of method work. If it finished successful
      */
     public String sort() {
+        //todo: дописать проверку пуста ли коллеция (?)
         list.sort(comparator);
         return "Collection was successfully sort.";
     }

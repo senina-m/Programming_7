@@ -1,6 +1,7 @@
 package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
+import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
 import ru.senina.itmo.lab7.labwork.LabWork;
 import ru.senina.itmo.lab7.CollectionKeeperParser;
@@ -32,7 +33,7 @@ public class FilterByDescriptionCommand extends Command {
     }
 
     @Override
-    protected String doRun() {
+    protected CommandResponse doRun() {
         try {
             collectionKeeper.sort();
             List<LabWork> resultElements = collectionKeeper.filterByDescription(description);
@@ -42,12 +43,12 @@ public class FilterByDescriptionCommand extends Command {
                 for(int i = 0; i < resultElements.size(); i++){
                     result.append("Element ").append(i + 1).append(": \n").append(parser.fromElementToString(resultElements.get(i))).append("\n");
                 }
-                return result.toString();
+                return new CommandResponse(1, getName(), result.toString());
             }else{
-                return "There is now elements with description \"" + description + "\".";
+                return new CommandResponse(2, getName(), "There is now elements with description \"" + description + "\".");
             }
         }catch (ParsingException e){
-            return "Parsing in filter_by_description was failed. " + e.getMessage();
+            return new CommandResponse(3, getName(), "Parsing in filter_by_description was failed. " + e.getMessage());
         }
     }
 

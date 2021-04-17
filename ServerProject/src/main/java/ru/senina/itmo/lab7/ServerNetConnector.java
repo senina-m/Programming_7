@@ -11,31 +11,34 @@ import java.util.logging.Level;
 
 public class ServerNetConnector {
     private ServerSocket serverSocket;
+
     private Socket clientSocket;
+
     private PrintWriter out;
     private BufferedReader in;
-
-    public void startConnection(int port){
+    public boolean startConnection(int port){
         try {
             serverSocket = new ServerSocket(port);
             clientSocket = serverSocket.accept();
             Logging.log(Level.INFO, "Connection was accepted.");
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            return true;
         } catch (IOException e){
             //TODO: обработать ошибки UnknownHostException отдельно?
             Logging.log(Level.WARNING, "Exception during starting connection. " + e.getLocalizedMessage());
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
         }
+        return false;
     }
 
-    public String nextCommand(int timeout) throws TimeoutException{
+    public String nextCommand(int attempts) throws TimeoutException{
         String line = null;
         try {
             while(line == null) {
                 line = in.readLine();
-                timeout--;
-                if(timeout<0){
+                attempts--;
+                if(attempts<0){
                     throw new TimeoutException("Reading time is out");
                 }
             }
@@ -66,5 +69,13 @@ public class ServerNetConnector {
 
     public boolean checkIfConnectionClosed(){
         return serverSocket.isClosed();
+    }
+
+    public Socket getClientSocket() {
+        return clientSocket;
+    }
+
+    public void setClientSocket(Socket clientSocket) {
+        this.clientSocket = clientSocket;
     }
 }

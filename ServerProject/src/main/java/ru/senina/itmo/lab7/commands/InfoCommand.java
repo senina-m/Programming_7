@@ -1,6 +1,7 @@
 package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
+import ru.senina.itmo.lab7.CommandResponse;
 
 /**
  * Command prints information about the collection (type, initialization date, number of elements, etc.) to the standard output stream
@@ -18,10 +19,9 @@ public class InfoCommand extends CommandWithoutArgs {
     }
 
     @Override
-    protected String doRun() {
-        return "You have entered info command.\n" +
-                "This collection was created: " + collectionKeeper.getTime() + "\n"
+    protected CommandResponse doRun() {
+        return new CommandResponse(1, getName(), "This collection was created: " + collectionKeeper.getTime() + "\n"
                 + "Collection type: " + collectionKeeper.getType() + "\n"
-                + "Amount of collection's elements: " + collectionKeeper.getAmountOfElements() + "\n";
+                + "Amount of collection's elements: " + collectionKeeper.getAmountOfElements());
     }
 }

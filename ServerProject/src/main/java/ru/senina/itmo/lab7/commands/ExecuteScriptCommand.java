@@ -1,5 +1,6 @@
 package ru.senina.itmo.lab7.commands;
 
+import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
 
 @CommandAnnotation(name = "execute_script", filename = true)
@@ -9,8 +10,8 @@ public class ExecuteScriptCommand extends Command {
     }
 
     @Override
-    protected String doRun() {
-        return "Execute script ";
+    protected CommandResponse doRun() {
+        return new CommandResponse(1, getName(), "Execute script ");
     }
 
     @Override

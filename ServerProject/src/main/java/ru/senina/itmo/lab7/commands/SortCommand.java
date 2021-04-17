@@ -1,6 +1,7 @@
 package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
+import ru.senina.itmo.lab7.CommandResponse;
 
 /**
  * Command sorts collection
@@ -18,7 +19,7 @@ public class SortCommand extends CommandWithoutArgs {
     }
 
     @Override
-    protected String doRun() {
-        return collectionKeeper.sort();
+    protected CommandResponse doRun() {
+        return new CommandResponse(1, getName(), collectionKeeper.sort());
     }
 }
