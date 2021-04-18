@@ -11,7 +11,7 @@ public enum Difficulty {
     INSANE(3),
     HOPELESS(4);
 
-    private int value;
+    private final int value;
 
     Difficulty(int value){
         this.value = value;

@@ -10,7 +10,6 @@ import java.util.Objects;
 /**
  * Class an element of collection
  */
-
 public class LabWork {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
