@@ -22,11 +22,6 @@ public class ServerKeeper {
             ProcessingTask processingTask = new ProcessingTask(controller, sendingTask);
             ReadingTask readingTask = new ReadingTask(net, processThreads, processingTask);
             if (net.startConnection(serverPort)) {
-                //todo: sent commands
-//                SetOfCommands setOfCommands = new SetOfCommands(createCommandsArgsMap(createCommandMap()));
-//                String commandsSetString = new JsonParser<>(objectMapper, SetOfCommands.class).fromObjectToString(setOfCommands);
-//                netConnector.sendResponse(commandsSetString);
-//                Logging.log(Level.INFO, "Initial commands set was sent to client.");
                 readThreads.execute(readingTask);
             }
             try {

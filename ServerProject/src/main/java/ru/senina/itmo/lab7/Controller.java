@@ -22,7 +22,7 @@ public class Controller {
         //Todo: обработка команды
         if (strCommand != null) {
             CommandArgs commandArgs = commandArgsParser.fromStringToObject(strCommand);
-            Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " (" + commandArgs.getNumber() + ") was read.");
+            Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " was read.");
             CommandResponse commandResponse = model.run(commandArgs);
             Logging.log(Level.INFO, "Command " + commandResponse.getCommandName() + " was executed.");
             return commandResponseParser.fromObjectToString(commandResponse);

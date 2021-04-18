@@ -8,20 +8,11 @@ import ru.senina.itmo.lab7.labwork.LabWork;
  * Parent of all commands classes
  */
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 public abstract class Command {
     private String[] args;
     private final String name;
     private final String description;
-    private int number;
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
 
     protected Command(String name, String description) {
         this.name = name;
@@ -30,7 +21,6 @@ public abstract class Command {
 
     public void setArgs(CommandArgs args) {
         this.args = args.getArgs();
-        this.number = args.getNumber();
     }
 
     public String[] getArgs() {

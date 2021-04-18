@@ -177,4 +177,10 @@ public class TerminalKeeper {
     public void setCommands(Map<String, String[]> commandsWithArgs) {
         this.commands = commandsWithArgs;
     }
+
+    public CommandArgs authorizeUser() {
+        //todo: white authorization method here
+        //Ask user to type login and password (read password with readPassword)
+        return null;
+    }
 }

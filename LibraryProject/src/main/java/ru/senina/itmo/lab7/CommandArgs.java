@@ -4,9 +4,9 @@ import ru.senina.itmo.lab7.labwork.LabWork;
 
 public class CommandArgs {
     private String commandName;
-    private int number;
     private String[] args;
     private LabWork element;
+    private String token;
 
     public CommandArgs(String commandName, String[] args) {
         this.commandName = commandName;
@@ -16,20 +16,20 @@ public class CommandArgs {
     public CommandArgs() {
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public String getCommandName() {
         return commandName;
     }
 
     public void setCommandName(String commandName) {
         this.commandName = commandName;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
     }
 
     public String[] getArgs() {

@@ -15,7 +15,7 @@ public class Model {
     private static final CollectionKeeper collectionKeeper = new CollectionKeeper(new LinkedList<>());
 
     public CommandResponse run(CommandArgs commandArgs) {
-            Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " (" + commandArgs.getNumber() + ") was read.");
+            Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " was read.");
             Command command = commandMap.get(commandArgs.getCommandName());
             command.setArgs(commandArgs);
             if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
@@ -56,22 +56,9 @@ public class Model {
         commandMap.put("print_descending", new PrintDescendingCommand());
         commandMap.put("execute_script", new ExecuteScriptCommand());
         commandMap.put("exit", new ExitCommand());
+        commandMap.put("request_map_of_commands", new RequestCommandsMapCommand(commandMap));
         return commandMap;
     }
 
-    private Map<String, String[]> createCommandsArgsMap(Map<String, Command> map) {
-        Map<String, String[]> commandsArgsMap = new HashMap<>();
-        for (Command command : map.values()) {
-            if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
-                CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
-                if (annotation.element()) {
-                    commandsArgsMap.put(annotation.name(), new String[]{"element"});
-                } else {
-                    commandsArgsMap.put(annotation.name(), new String[]{""});
-                }
-            }
-        }
-        return commandsArgsMap;
-    }
 }
 
