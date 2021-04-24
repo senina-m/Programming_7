@@ -21,8 +21,17 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
     implementation 'com.jwebmp.jackson.datatype:jackson-datatype-jsr310:0.63.0.19'
     implementation 'junit:junit:4.13.1'
-    implementation 'com.h2database:h2:1.4.199'
-    implementation 'org.hibernate:hibernate-core:5.4.2.Final'
+    implementation 'org.postgresql:postgresql:42.2.19'
+    implementation 'org.hibernate:hibernate-core:5.1.15.Final'
+    implementation 'org.hibernate:hibernate-entitymanager:5.1.15.Final'
+
+    //Lombok dependencies
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+
     compile project(":LibraryProject")
 }
 
