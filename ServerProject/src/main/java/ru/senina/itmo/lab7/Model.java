@@ -12,7 +12,7 @@ public class Model {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final CollectionKeeperParser collectionKeeperParser = new CollectionKeeperParser(objectMapper, CollectionKeeper.class);
     private static final Map<String, Command> commandMap = createCommandMap();
-    private static final CollectionKeeper collectionKeeper = new CollectionKeeper(new LinkedList<>());
+    private static final CollectionKeeper collectionKeeper = new CollectionKeeper();
 
     public CommandResponse run(CommandArgs commandArgs) {
             Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " was read.");

@@ -7,6 +7,7 @@ import ru.senina.itmo.lab7.parser.JsonParser;
 import ru.senina.itmo.lab7.parser.ParsingException;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class CollectionKeeperParser extends JsonParser<CollectionKeeper> {
 
@@ -16,7 +17,7 @@ public class CollectionKeeperParser extends JsonParser<CollectionKeeper> {
 
     public String fromCollectionToStringElements(CollectionKeeper object) throws ParsingException {
         StringBuilder resultString = new StringBuilder();
-        LinkedList<LabWork> list = object.getList();
+        List<LabWork> list = object.getList();
         for (int i = 0; i < list.size(); i++) {
             resultString.append("\nElement ").append(i + 1).append(":\n").append(fromElementToString(list.get(i)));
         }

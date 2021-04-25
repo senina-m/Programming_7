@@ -1,12 +1,31 @@
 package ru.senina.itmo.lab7.labwork;
 
+import lombok.Getter;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Coordinates {
+@Entity
+public class Coordinates implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "coordinates_id")
+    private long id;
+
+    @Getter
+    @Column(name = "coordinates_x")
     private int x; //Максимальное значение поля: 74
+
+    @Getter
+    @Column(name = "coordinates_y")
     private long y; //Значение поля должно быть больше -47
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "coordinates_id")
+    private LabWork labWork;
 
     public Coordinates(int x, long y) throws InvalidArgumentsException {
         if(x <= 74 && y >= -47){
@@ -33,20 +52,12 @@ public class Coordinates {
         return Objects.hash(x, y);
     }
 
-    public int getX() {
-        return x;
-    }
-
     public void setX(int x) throws InvalidArgumentsException{
         if(x <= 74){
             this.x = x;
         }else {
             throw new InvalidArgumentsException("Coordinates value is wrong.");
         }
-    }
-
-    public long getY() {
-        return y;
     }
 
     public void setY(long y) throws InvalidArgumentsException{

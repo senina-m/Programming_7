@@ -2,16 +2,29 @@ package ru.senina.itmo.lab7.labwork;
 
 import ru.senina.itmo.lab7.InvalidArgumentsException;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * The class-field in LabWork class
  */
-public class Discipline {
+@Entity
+public class Discipline implements Serializable {
+    @Id
+    @Column(name = "discipline_name")
     private String name; //Поле не может быть null, Строка не может быть пустой
+    @Column(name = "discipline_lectureHours")
     private long lectureHours;
+    @Column(name = "discipline_practiceHours")
     private Integer practiceHours; //Поле может быть null
+    @Column(name = "discipline_selfStudyHours")
     private int selfStudyHours;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "discipline_name")
+    private LabWork labWork;
 
     public Discipline() {
     }

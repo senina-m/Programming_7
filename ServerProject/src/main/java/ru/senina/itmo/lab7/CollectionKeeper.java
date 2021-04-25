@@ -2,49 +2,41 @@ package ru.senina.itmo.lab7;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ru.senina.itmo.lab7.labwork.Discipline;
 import ru.senina.itmo.lab7.labwork.LabWork;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
 
 /**
  * Class to keep collection's elements
  */
-public class CollectionKeeper{
-
+public class CollectionKeeper {
     @JsonCreator
-    public CollectionKeeper(LinkedList<LabWork> list) {
-        this.list = list;
+    public CollectionKeeper() {
     }
 
-//    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonIgnore
     private final Date time = new Date();
-    @JsonIgnore
-    private final Comparator comparator = new Comparator();
-    private final LinkedList<LabWork> list;
+    //TODO: think how to save creation time for full table (do i actually need it?)
 
-    public LinkedList<LabWork> getList() {
-        return list;
+//--------------------------METHODS----------------------------------------------------------------------
+
+
+    public void setList(List<LabWork> list) throws IllegalArgumentException {
+        for (LabWork element : list) {
+            DBManager.addElement(element);
+        }
     }
 
-
-    public void setList(LinkedList<LabWork> list) throws IllegalArgumentException {
-        this.list.clear();
-        this.list.addAll(list);
-    }
-
-    @JsonIgnore
-    public String getType() {
-        return "LinkedList";
+    public List<LabWork> getList() {
+        return DBManager.readAll();
     }
 
 
     @JsonIgnore
     public int getAmountOfElements() {
-        return Optional.of(list.size()).orElse(0);
+        return Optional.of(DBManager.countNumOfElements()).orElse(0);
     }
 
     public String getTime() {
@@ -52,168 +44,114 @@ public class CollectionKeeper{
         return dateFormat.format(time);
     }
 
-    /**
-     * Update element with given ID
-     *
-     * @param id      given ID
-     * @param element element update value
-     * @return String result of method work. If it finished successful
-     */
     public String updateID(long id, LabWork element) {
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getId() == id) {
-                list.set(i, element);
-                return "Element with id: " + id + " was successfully updated.";
-            }
+        try {
+            DBManager.updateById(element, id);
+            return "Element with id: " + id + " was successfully updated.";
+        } catch (Exception e) {
+            return "There is no element with id: " + id + " in collection.";
+            //todo: possess different exceptions
         }
-        return "There is no element with id: " + id + " in collection.";
     }
-
-    /**
-     * Add element to collection
-     *
-     * @param element element to add
-     * @return String result of method work. If it finished successful
-     */
 
     public String add(LabWork element) {
-        list.add(element);
-        return "Element with id: " + element.getId() + " was successfully added.";
+        try {
+            DBManager.addElement(element);
+            return "Element with id: " + element.getId() + " was successfully added.";
+        } catch (Exception e) {
+            Logging.log(Level.WARNING, "Something wrong with adding element to collection. (Warning from collectionKeeper)" + e.getMessage());
+            //todo: possess different exceptions
+            throw new RuntimeException("Something wrong with adding element to collection. (Warning from collectionKeeper) " + e.getMessage());
+        }
     }
-
-    /**
-     * Remove element with given id
-     *
-     * @param id given id
-     * @return String result of method work. If it finished successful
-     */
 
     public String removeById(long id) {
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getId() == id) {
-                list.remove(i);
-                return "Element with id: " + id + " was successfully removed.";
-            }
+        try {
+            return "Element with id: " + id + " was successfully removed.";
+        }catch (Exception e){
+            return "There is no element with id: " + id + " in collection.";
+            //todo: possess different exceptions
         }
-        return "There is no element with id: " + id + " in collection.";
     }
 
-    /**
-     * Clear collection
-     *
-     * @return String result of method work. If it finished successful
-     */
     public String clear() {
-        list.clear();
-        return "The collection was successfully cleared.";
+        try {
+            DBManager.clear();
+            return "The collection was successfully cleared.";
+        }catch (Exception e){
+            Logging.log(Level.WARNING, "Something wrong with clearing of collection. (Warning from collectionKeeper)" + e.getMessage());
+            //todo: possess different exceptions
+            throw new RuntimeException("Something wrong with clearing of collection. (Warning from collectionKeeper) " + e.getMessage());
+        }
     }
-
-    /**
-     * Remove element with given index
-     *
-     * @param index given index
-     * @return String result of method work. If it finished successful
-     */
 
     public String removeAt(int index) {
         try {
-            long id = list.remove(index).getId();
-            return "Element with index " + index + " and id " + id + " was successfully removed.";
-        } catch (IndexOutOfBoundsException e) {
+            DBManager.removeATIndex(index);
+            return "Element with index " + index + " was successfully removed.";
+        } catch (Exception e) {
+            //todo: possess different exceptions
             return "Removing an element with index " + index + " was failed. No such index in the collection.";
         }
     }
 
-    /**
-     * Sort collection
-     *
-     * @return String result of method work. If it finished successful
-     */
+
     public String sort() {
         //todo: дописать проверку пуста ли коллеция (?)
-        list.sort(comparator);
-        return "Collection was successfully sort.";
+        try {
+            DBManager.sort();
+            return "Collection was successfully sort.";
+        }catch (Exception e){
+            Logging.log(Level.WARNING, "Something wrong with sorting collection. (Warning from collectionKeeper)" + e.getMessage());
+            //todo: possess different exceptions
+            throw new RuntimeException("Something wrong with sorting collection. (Warning from collectionKeeper) " + e.getMessage());
+        }
     }
 
-    /**
-     * Remove element with grater value of SelfStudyHours of given element
-     *
-     * @param element given element
-     * @return String result of method work. If it finished successful
-     */
+
     public String removeGreater(LabWork element) {
-        List<Integer> indexToDelete = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            if (comparator.compare(list.get(i), element) > 0) {
-                indexToDelete.add(i);
-            }
+        try {
+            DBManager.removeGreater(element);
+            return "All elements greater then entered were successfully removed.";
+        }catch (Exception e){
+            Logging.log(Level.WARNING, "Something wrong with removing_greater elements of collection. (Warning from collectionKeeper)" + e.getMessage());
+            //todo: possess different exceptions
+            throw new RuntimeException("Something wrong with removing_greater elements of collection. (Warning from collectionKeeper) " + e.getMessage());
         }
-        for (int i = indexToDelete.size() - 1; i >= 0; i--) {
-            list.remove((int) indexToDelete.get(i));
-        }
-        return "All elements greater then entered were successfully removed.";
     }
 
-    /**
-     * Sort by difficulty of subject
-     *
-     * @return The minimal element by it difficulty
-     * @throws IndexOutOfBoundsException if no elements in collection
-     */
+
     public LabWork minByDifficulty() throws IndexOutOfBoundsException {
         try {
-            LabWork element = list.get(0);
-            for (LabWork labWork : list) {
-                if (comparator.compareByDifficulty(element, labWork) > 0) {
-                    element = labWork;
-                }
-            }
-            return element;
-        } catch (IndexOutOfBoundsException e) {
+            return DBManager.minByBifficulty();
+        } catch (Exception e) {
+            Logging.log(Level.WARNING, "Something wrong with minByDifficulty elements of collection. (Warning from collectionKeeper)" + e.getMessage());
+            //todo: possess different exceptions
             throw new InvalidArgumentsException("No elements in collection. Can't choose the less by Difficulty.");
         }
     }
 
-    /**
-     * Filter by given description
-     *
-     * @param description given description
-     * @return String result of method work. If it finished successful
-     */
-
     public List<LabWork> filterByDescription(String description) {
-        return list.stream()
-                .filter(e -> e.getDescription()
-                        .equals(description))
-                .collect(Collectors.toList());
+        try{
+            return DBManager.filterByDescription(description);
+        }catch (Exception e){
+            Logging.log(Level.WARNING, "Something wrong with filterByDescription of collection. (Warning from collectionKeeper)" + e.getMessage());
+            //todo: possess different exceptions
+            throw new RuntimeException("Something wrong with filterByDescription of collection. (Warning from collectionKeeper) " + e.getMessage());
+        }
     }
 
-    /**
-     * Method to sort the list of elements
-     *
-     * @return sorted list of LabWork objects
-     */
+
     @JsonIgnore
     public List<LabWork> getSortedList() {
-        return list.stream()
-                .sorted(comparator)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Class to override compare method for LabWork objects
-     */
-    static class Comparator implements java.util.Comparator<LabWork> {
-
-        @Override
-        public int compare(LabWork o1, LabWork o2) {
-            Discipline discipline1 = o1.getDiscipline();
-            Discipline discipline2 = o2.getDiscipline();
-            return discipline1.getSelfStudyHours() - discipline2.getSelfStudyHours();
-        }
-
-        public int compareByDifficulty(LabWork o1, LabWork o2) {
-            return o1.getDifficulty().getValue() - o2.getDifficulty().getValue();
+        try {
+            DBManager.sort();
+            return DBManager.readAll();
+        }catch (Exception e){
+            Logging.log(Level.WARNING, "Something wrong with getSortedList of collection. (Warning from collectionKeeper)" + e.getMessage());
+            //todo: possess different exceptions
+            throw new RuntimeException("Something wrong with getSortedList of collection. (Warning from collectionKeeper) " + e.getMessage());
         }
     }
+
 }

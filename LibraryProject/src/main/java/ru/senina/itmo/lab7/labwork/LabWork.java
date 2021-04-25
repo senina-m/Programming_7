@@ -2,50 +2,66 @@ package ru.senina.itmo.lab7.labwork;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
 
-import java.time.LocalDateTime;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Class an element of collection
  */
-public class LabWork {
+@Entity
+public class LabWork  implements Serializable {
 
+    @CreationTimestamp @Setter @Getter
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private final java.time.LocalDateTime creationDate = java.time.LocalDateTime.now();
+    private java.time.LocalDateTime creationDate = java.time.LocalDateTime.now();
     //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    @Id @Getter
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private final Long id = Math.abs((long) Objects.hash(creationDate)); //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным,
     // Значение этого поля должно генерироваться автоматически
 
+
+    @Getter @Setter
+    @Column(name="name", nullable = false)
     private String name; //Поле не может быть null, Строка не может быть пустой
+
+    @Setter @Getter
+    @OneToOne(mappedBy = "labWork", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
     private Coordinates coordinates; //Поле не может быть null
+
+    @Getter
+    @Column(name = "minimalPoint")
     private float minimalPoint; //Значение поля должно быть больше 0
+
+    @Getter
+    @Column(name = "description")
     private String description; //Поле не может быть null
+
+    @Getter
+    @Column(name = "averagePoint")
     private Integer averagePoint; //Поле не может быть null, Значение поля должно быть больше 0
+
+    @Transient
     private Difficulty difficulty; //Поле может быть null
+    @Basic @Getter
+    private int difficultyIntValue;
+
+
+    @OneToOne(mappedBy = "labWork", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    @Getter @Setter
     private Discipline discipline; //Поле не может быть null
 
     public LabWork() {
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @param name Name of lab
-     * @param coordinates coordinates
-     * @param minimalPoint minimal point you can get on lab
-     * @param description description of the lab
-     * @param averagePoint average point students get
-     * @param difficulty how difficult is lab
-     * @param discipline the lab subject
-     */
     public LabWork(String name, Coordinates coordinates, float minimalPoint, String description, Integer averagePoint, Difficulty difficulty, Discipline discipline) {
         this.name = name;
         this.coordinates = coordinates;
@@ -56,8 +72,19 @@ public class LabWork {
         this.discipline = discipline;
     }
 
-    public Long getId() {
-        return id;
+
+    @PostLoad
+    void fillTransient() {
+        if (difficultyIntValue > 0) {
+            this.difficulty = Difficulty.of(difficultyIntValue);
+        }
+    }
+
+    @PrePersist
+    void fillPersistent() {
+        if (difficulty != null) {
+            this.difficultyIntValue = difficulty.getValue();
+        }
     }
 
     @Override
@@ -73,35 +100,12 @@ public class LabWork {
         return Objects.hash(id, name, coordinates, minimalPoint, description, averagePoint, difficulty, discipline);
     }
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCreationDate(LocalDateTime date) {
-    }
-
-    public float getMinimalPoint() {
-        return minimalPoint;
-    }
-
     public void setMinimalPoint(float minimalPoint) throws InvalidArgumentsException {
         if(minimalPoint > 0){
             this.minimalPoint = minimalPoint;
         }else {
             throw new InvalidArgumentsException("Minimal point can't be less then 0.");
         }
-    }
-
-    public void setCoordinates(Coordinates coordinates){
-        this.coordinates = coordinates;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public void setDescription(String description) throws InvalidArgumentsException {
@@ -112,25 +116,12 @@ public class LabWork {
         }
     }
 
-    public Integer getAveragePoint() {
-        return averagePoint;
-    }
-
     public void setAveragePoint(Integer averagePoint) throws InvalidArgumentsException{
         if (averagePoint != null && averagePoint > 0) {
-            this.description = description;
+            this.averagePoint = averagePoint;
         } else {
             throw new InvalidArgumentsException("Average point can't be null or less then 0.");
         }
-        this.averagePoint = averagePoint;
-    }
-
-    public Difficulty getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(Difficulty difficulty) {
-        this.difficulty = difficulty;
     }
 
     public void setDifficulty(String str) throws InvalidArgumentsException{
@@ -146,12 +137,17 @@ public class LabWork {
         }
     }
 
-    public Discipline getDiscipline() {
-        return discipline;
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
     }
 
-    public void setDiscipline(Discipline discipline) {
-        this.discipline = discipline;
+    public void copyElement(LabWork labWork){
+        this.name = labWork.name;
+        this.coordinates = labWork.coordinates;
+        this.averagePoint = labWork.averagePoint;
+        this.minimalPoint = labWork.minimalPoint;
+        this.description = labWork.description;
+        this.difficulty = labWork.difficulty;
+        this.discipline = labWork.discipline;
     }
-
 }

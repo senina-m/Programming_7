@@ -13,11 +13,17 @@ targetCompatibility = 1.8
 sourceCompatibility = 1.8
 
 dependencies {
-    implementation 'org.testng:testng:7.1.0'
-    implementation 'org.jetbrains:annotations:19.0.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
     implementation 'com.jwebmp.jackson.datatype:jackson-datatype-jsr310:0.63.0.19'
-    implementation 'junit:junit:4.13.1'
+
+    implementation 'org.postgresql:postgresql:42.2.19'
+    implementation 'org.hibernate:hibernate-core:5.4.2.Final'
+    implementation 'org.hibernate:hibernate-entitymanager:5.4.2.Final'
+
+    //Lombok dependencies
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 }
