@@ -31,7 +31,7 @@ public class AddCommand extends CommandWithoutArgs{
 
     @Override
     protected CommandResponse doRun() {
-        return new CommandResponse(1, getName(), collectionKeeper.add(element));
+        return new CommandResponse(1, getName(), collectionKeeper.add(element, getLogin()));
     }
 
 }

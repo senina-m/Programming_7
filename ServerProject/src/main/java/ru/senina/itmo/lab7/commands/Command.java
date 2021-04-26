@@ -1,6 +1,8 @@
 package ru.senina.itmo.lab7.commands;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
+import lombok.Setter;
 import ru.senina.itmo.lab7.*;
 import ru.senina.itmo.lab7.labwork.LabWork;
 
@@ -13,6 +15,10 @@ public abstract class Command {
     private String[] args;
     private final String name;
     private final String description;
+    @Getter @Setter
+    private String token;
+    @Getter @Setter
+    private String login;
 
     protected Command(String name, String description) {
         this.name = name;
@@ -21,6 +27,8 @@ public abstract class Command {
 
     public void setArgs(CommandArgs args) {
         this.args = args.getArgs();
+        this.login = args.getLogin();
+        this.token = args.getToken();
     }
 
     public String[] getArgs() {
@@ -59,10 +67,12 @@ public abstract class Command {
     public void setCollectionKeeper(CollectionKeeper collectionKeeper) {
     }
 
-    public void setParser(CollectionKeeperParser parser) {
+    public void setParser(CollectionParser parser) {
     }
 
     protected void checkIfLogin() throws UnLoginUserException {
-        //todo: check if token is correct
+        if (!DBManager.checkLogin(login, token)){
+            throw new UnLoginUserException();
+        };
     }
 }

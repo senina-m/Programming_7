@@ -16,6 +16,7 @@ public class ServerMain {
                     @Override
                     public void run() {
                         serverKeeper.stop();
+                        DBManager.finish();
                     }
                 }));
                 serverKeeper.start(Integer.parseInt(args[0]));

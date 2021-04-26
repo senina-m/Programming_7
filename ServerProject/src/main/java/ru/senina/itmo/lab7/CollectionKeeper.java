@@ -23,9 +23,9 @@ public class CollectionKeeper {
 //--------------------------METHODS----------------------------------------------------------------------
 
 
-    public void setList(List<LabWork> list) throws IllegalArgumentException {
+    public void setList(List<LabWork> list, String login) throws IllegalArgumentException {
         for (LabWork element : list) {
-            DBManager.addElement(element);
+            DBManager.addElement(element, login);
         }
     }
 
@@ -54,9 +54,9 @@ public class CollectionKeeper {
         }
     }
 
-    public String add(LabWork element) {
+    public String add(LabWork element, String login) {
         try {
-            DBManager.addElement(element);
+            DBManager.addElement(element, login);
             return "Element with id: " + element.getId() + " was successfully added.";
         } catch (Exception e) {
             Logging.log(Level.WARNING, "Something wrong with adding element to collection. (Warning from collectionKeeper)" + e.getMessage());
@@ -123,7 +123,7 @@ public class CollectionKeeper {
 
     public LabWork minByDifficulty() throws IndexOutOfBoundsException {
         try {
-            return DBManager.minByBifficulty();
+            return DBManager.minByDifficulty();
         } catch (Exception e) {
             Logging.log(Level.WARNING, "Something wrong with minByDifficulty elements of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
@@ -153,5 +153,4 @@ public class CollectionKeeper {
             throw new RuntimeException("Something wrong with getSortedList of collection. (Warning from collectionKeeper) " + e.getMessage());
         }
     }
-
 }

@@ -10,8 +10,6 @@ import ru.senina.itmo.lab7.labwork.Difficulty;
 import ru.senina.itmo.lab7.labwork.Discipline;
 import ru.senina.itmo.lab7.labwork.LabWork;
 
-import java.util.LinkedList;
-
 public class JacksonTest {
 
     public static ObjectMapper objectMapper = new ObjectMapper();
@@ -34,7 +32,7 @@ public class JacksonTest {
         LabWork labWork = new LabWork(name, coordinates, minimalPoint, description, averagePoint, difficulty, discipline);
         CollectionKeeper collectionKeeper = new CollectionKeeper();
 
-        CollectionKeeperParser parser = new CollectionKeeperParser(objectMapper, CollectionKeeper.class);
+        CollectionParser parser = new CollectionParser(objectMapper, CollectionKeeper.class);
         String json = parser.fromObjectToString(collectionKeeper);
         System.out.println(json);
         CollectionKeeper newObject = parser.fromStringToObject(json);
@@ -51,7 +49,7 @@ public class JacksonTest {
         Difficulty difficulty = Difficulty.HOPELESS;
         Discipline discipline = new Discipline("Killing", 35, 65, 26);
         LabWork labWork = new LabWork(name, coordinates, minimalPoint, description, averagePoint, difficulty, discipline);
-        CollectionKeeperParser parser = new CollectionKeeperParser(objectMapper, CollectionKeeper.class);
+        CollectionParser parser = new CollectionParser(objectMapper, CollectionKeeper.class);
         String json = parser.fromElementToString(labWork);
         System.out.println(json);
         LabWork newLabWork = parser.fromStringToElement(json);

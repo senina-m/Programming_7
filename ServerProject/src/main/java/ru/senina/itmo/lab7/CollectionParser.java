@@ -6,12 +6,11 @@ import ru.senina.itmo.lab7.labwork.LabWork;
 import ru.senina.itmo.lab7.parser.JsonParser;
 import ru.senina.itmo.lab7.parser.ParsingException;
 
-import java.util.LinkedList;
 import java.util.List;
 
-public class CollectionKeeperParser extends JsonParser<CollectionKeeper> {
+public class CollectionParser extends JsonParser<CollectionKeeper> {
 
-    public CollectionKeeperParser(ObjectMapper objectMapper, Class<CollectionKeeper> classT) {
+    public CollectionParser(ObjectMapper objectMapper, Class<CollectionKeeper> classT) {
         super(objectMapper, classT);
     }
 
@@ -26,7 +25,7 @@ public class CollectionKeeperParser extends JsonParser<CollectionKeeper> {
 
     public String fromElementToString(LabWork element) throws ParsingException {
         try {
-            return CollectionKeeperParser.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(element);
+            return CollectionParser.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(element);
         } catch (JsonProcessingException e) {
             throw new ParsingException("Something wrong with element id: " + element.getId());
         }
@@ -34,7 +33,7 @@ public class CollectionKeeperParser extends JsonParser<CollectionKeeper> {
 
     public LabWork fromStringToElement(String json) throws ParsingException {
         try {
-            return CollectionKeeperParser.getObjectMapper().readValue(json, LabWork.class);
+            return CollectionParser.getObjectMapper().readValue(json, LabWork.class);
         } catch (JsonProcessingException e) {
             throw new ParsingException("Something wrong with element string -> object parsing.");
         }
@@ -43,7 +42,7 @@ public class CollectionKeeperParser extends JsonParser<CollectionKeeper> {
     @Override
     public String fromObjectToString(CollectionKeeper collectionKeeper) throws ParsingException {
         try {
-            return CollectionKeeperParser.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(collectionKeeper.getList());
+            return CollectionParser.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(collectionKeeper.getList());
         } catch (JsonProcessingException e) {
             throw new ParsingException("Something wrong with parsing collection to string.");
         }

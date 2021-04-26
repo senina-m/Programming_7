@@ -32,14 +32,15 @@ public class DBManager {
         entityManagerFactory.close();
     }
 
-    public static void addElement(LabWork labWork) {
+    public static void addElement(LabWork labWork, String login) {
+        //todo: no such elements before (or i can add more?)
         assert entityManagerFactory != null; //Прикольная штука надо про неё прочитать и научиться пользоваться
         EntityManager manager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
-
         try {
             transaction = manager.getTransaction();
             transaction.begin();
+            labWork.setOwner(manager.find(Owner.class, login));
             manager.persist(labWork);
             transaction.commit();
         } catch (Exception ex) {
@@ -65,7 +66,6 @@ public class DBManager {
             transaction = manager.getTransaction();
             transaction.begin();
             elements = manager.createQuery("SELECT labwork FROM LabWork labwork", LabWork.class).getResultList();
-
             transaction.commit();
         } catch (Exception ex) {
             if (transaction != null) {
@@ -166,7 +166,7 @@ public class DBManager {
         }
     }
 
-    public static LabWork minByBifficulty(){
+    public static LabWork minByDifficulty(){
         LabWork element = null;
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
@@ -280,4 +280,79 @@ public class DBManager {
             manager.close();
         }
     }
+
+    public static String register(String login, String password) {
+        //TODO: catch exception that user exist if no - return null
+        assert entityManagerFactory != null;
+        EntityManager manager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = null;
+        String token = null;
+
+        try {
+            transaction = manager.getTransaction();
+            transaction.begin();
+            Owner user = new Owner();
+            user.setLogin(login);
+            user.setPassword(password);
+            manager.persist(user);
+            transaction.commit();
+        } catch (Exception ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            manager.close();
+        }
+        return null;
+    }
+
+    public static boolean checkLogin(String login, String token) throws UnLoginUserException {
+        assert entityManagerFactory != null;
+        EntityManager manager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = null;
+        boolean result = false;
+        try {
+            transaction = manager.getTransaction();
+            transaction.begin();
+            Owner user = manager.find(Owner.class, login);
+            result = token.equals(user.getToken());
+            transaction.commit();
+        } catch (Exception ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            manager.close();
+        }
+        return result;
+    }
+
+    public static String refreshToken(String login, String password){
+        //todo: check if no such user
+        assert entityManagerFactory != null;
+        EntityManager manager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = null;
+        String token = null;
+
+        try {
+            transaction = manager.getTransaction();
+            transaction.begin();
+            Owner user = manager.find(Owner.class, login);
+            if(user.getPassword().equals(password)){
+                token = null;
+            }
+            transaction.commit();
+        } catch (Exception ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            manager.close();
+        }
+        return null;
+    }
+
 }

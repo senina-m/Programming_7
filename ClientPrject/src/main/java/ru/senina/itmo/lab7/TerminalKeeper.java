@@ -6,6 +6,7 @@ import ru.senina.itmo.lab7.labwork.Discipline;
 import ru.senina.itmo.lab7.labwork.LabWork;
 import ru.senina.itmo.lab7.parser.Parser;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -179,8 +180,60 @@ public class TerminalKeeper {
     }
 
     public CommandArgs authorizeUser() {
-        //todo: white authorization method here
-        //Ask user to type login and password (read password with readPassword)
+        System.out.println("Do you have an account or you to register? Type \"sign in\" or \"log in\".");
+        while (true) {
+            switch (in.nextLine().trim()) {
+                case ("sign in"):
+                    return signIn();
+                    case ("log in"):
+                    return lonIn();
+                default:
+                    System.out.println("Incorrect input! Try to type again \"sign in\" or \"log in\".");
+            }
+        }
+    }
+
+    //Todo: хешировать пароли!!!
+
+    /** I have to put login first and then password */
+    public CommandArgs signIn(){
+        //todo: read password twice
+        CommandArgs signInCommand = new CommandArgs();
+        signInCommand.setArgs(new String[]{"register",getLogin(), encrypt(getPassword())});
+        return signInCommand;
+//        while(!password.equals(new String(console.readPassword("Please repeat your password: ")))){
+//            System.out.println("Your passwords aren't identical. Try again!");
+//        }
+    }
+
+    /** I have to put login first and then password */
+    public CommandArgs lonIn(){
+        CommandArgs logInCommand = new CommandArgs();
+        logInCommand.setArgs(new String[]{"authorize",getLogin(), encrypt(getPassword())});
+        return logInCommand;
+    }
+
+    private String getLogin(){
+        System.out.print("Please enter your login: ");
+        String login = in.nextLine().trim();
+        while (login.equals("")){
+            System.out.println("You entered empty login! Try again");
+            login = in.nextLine().trim();
+        }
+        return login;
+    }
+
+    private String getPassword(){
+        Console console = System.console();
+        String password = new String(console.readPassword("Please enter your password: ")).trim();
+        while (password.equals("")){
+            password = new String(console.readPassword("You entered empty password! Please try again: ")).trim();
+        }
+        return password;
+    }
+
+    private String encrypt(String password){
+        //todo: return encrypted password
         return null;
     }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
+import ru.senina.itmo.lab7.Owner;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,7 +23,8 @@ public class LabWork  implements Serializable {
     private java.time.LocalDateTime creationDate = java.time.LocalDateTime.now();
     //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     @Id @Getter
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generator_labwork")
+    @SequenceGenerator(name = "generator_labwork", sequenceName = "seq_labwork", allocationSize = 1)
     private final Long id = Math.abs((long) Objects.hash(creationDate)); //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным,
     // Значение этого поля должно генерироваться автоматически
 
@@ -34,30 +36,34 @@ public class LabWork  implements Serializable {
     @Setter @Getter
     @OneToOne(mappedBy = "labWork", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
+    @JoinColumn(name = "coordinates", nullable = false)
     private Coordinates coordinates; //Поле не может быть null
 
     @Getter
-    @Column(name = "minimalPoint")
+    @Column(name = "minimalPoint", nullable = false)
     private float minimalPoint; //Значение поля должно быть больше 0
 
     @Getter
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description; //Поле не может быть null
 
     @Getter
-    @Column(name = "averagePoint")
+    @Column(name = "averagePoint", nullable = false)
     private Integer averagePoint; //Поле не может быть null, Значение поля должно быть больше 0
 
     @Transient
     private Difficulty difficulty; //Поле может быть null
     @Basic @Getter
+    @Column(name = "difficultyIntValue", nullable = false)
     private int difficultyIntValue;
 
-
-    @OneToOne(mappedBy = "labWork", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
     @Getter @Setter
+    @OneToOne
     private Discipline discipline; //Поле не может быть null
+
+    @ManyToOne()
+    @Getter @Setter
+    private Owner owner;
 
     public LabWork() {
     }

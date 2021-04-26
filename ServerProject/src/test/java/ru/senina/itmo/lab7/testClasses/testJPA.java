@@ -1,10 +1,9 @@
-package ru.senina.itmo.lab7;
+package ru.senina.itmo.lab7.testClasses;
 
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.senina.itmo.lab7.testClasses.*;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
@@ -76,7 +75,7 @@ public class testJPA {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            User user = new User();
+            TestUser user = new TestUser();
             user.setName("Sava");
             user.setGender(Gender.RATTUS);
             Address address = new Address();
@@ -84,7 +83,7 @@ public class testJPA {
             address.setStreet("ratland");
 
             user.setAddress(address);
-            address.setUser(user);
+            address.setTestUser(user);
 
             entityManager.persist(user);
 //            entityManager.persist(address); It will be created automatically
@@ -92,25 +91,25 @@ public class testJPA {
 
             assert1to1InsertedData();
             deleteTable("Address");
-            deleteTable("User");
+            deleteTable("TestUser");
         } catch (Exception ex) {
             if (transaction != null) {
                 transaction.rollback();
             }
             ex.printStackTrace();
             deleteTable("Address");
-            deleteTable("User");
+            deleteTable("TestUser");
         }
     }
 
     private void assert1to1InsertedData() {
-        Query query = entityManager.createQuery("FROM User");
-        @SuppressWarnings("unchecked") List<User> userList = query.getResultList();
+        Query query = entityManager.createQuery("FROM TestUser");
+        @SuppressWarnings("unchecked") List<TestUser> userList = query.getResultList();
 
         assertNotNull(userList);
         assertEquals(1, userList.size());
 
-        User user = userList.get(0);
+        TestUser user = userList.get(0);
         assertEquals("Sava", user.getName());
         assertEquals(Gender.RATTUS, user.getGender());
 

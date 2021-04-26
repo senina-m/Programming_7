@@ -10,7 +10,8 @@ import java.util.Objects;
 @Entity
 public class Coordinates implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generator_coordinates")
+    @SequenceGenerator(name = "generator_coordinates", sequenceName = "seq_coordinates", allocationSize = 1)
     @Column(name = "coordinates_id")
     private long id;
 

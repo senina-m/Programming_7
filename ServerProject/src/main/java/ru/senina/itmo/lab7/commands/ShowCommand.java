@@ -1,7 +1,7 @@
 package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
-import ru.senina.itmo.lab7.CollectionKeeperParser;
+import ru.senina.itmo.lab7.CollectionParser;
 import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.parser.ParsingException;
 
@@ -12,7 +12,7 @@ import ru.senina.itmo.lab7.parser.ParsingException;
 public class ShowCommand extends CommandWithoutArgs{
 
     private CollectionKeeper collectionKeeper;
-    private CollectionKeeperParser parser;
+    private CollectionParser parser;
 
     public ShowCommand() {
         super("show", "print to standard output all elements of the collection in string representation");
@@ -22,7 +22,7 @@ public class ShowCommand extends CommandWithoutArgs{
         this.collectionKeeper = collectionKeeper;
     }
 
-    public void setParser(CollectionKeeperParser parser) {
+    public void setParser(CollectionParser parser) {
         this.parser = parser;
     }
 

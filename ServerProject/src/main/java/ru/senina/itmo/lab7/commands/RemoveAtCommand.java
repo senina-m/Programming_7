@@ -34,7 +34,7 @@ public class RemoveAtCommand extends Command{
                 throw new InvalidArgumentsException("Remove_at command argument has to be Integer.");
             }
         } else {
-            throw new InvalidArgumentsException("Update command has to have an argument - index of the element.");
+            throw new InvalidArgumentsException("Remove_at command has to have an argument - index of the element.");
         }
     }
 

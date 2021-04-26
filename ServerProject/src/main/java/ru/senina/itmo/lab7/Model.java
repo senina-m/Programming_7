@@ -4,13 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.senina.itmo.lab7.commands.*;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 
 public class Model {
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final CollectionKeeperParser collectionKeeperParser = new CollectionKeeperParser(objectMapper, CollectionKeeper.class);
+    private static final CollectionParser COLLECTION_PARSER = new CollectionParser(objectMapper, CollectionKeeper.class);
     private static final Map<String, Command> commandMap = createCommandMap();
     private static final CollectionKeeper collectionKeeper = new CollectionKeeper();
 
@@ -24,7 +23,7 @@ public class Model {
                     command.setCollectionKeeper(collectionKeeper);
                 }
                 if (annotation.parser()) {
-                    command.setParser(collectionKeeperParser);
+                    command.setParser(COLLECTION_PARSER);
                 }
                 if (annotation.element()) {
                     //TODO: Check that element isn't null (have i do it here?)

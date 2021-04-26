@@ -16,7 +16,7 @@ public class Address {
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
-    private User user;
+    private TestUser testUser;
 
     @Column(name = "user_street")
     private String street;

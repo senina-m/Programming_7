@@ -12,29 +12,24 @@ import java.util.Objects;
 @Entity
 public class Discipline implements Serializable {
     @Id
-    @Column(name = "discipline_name")
+    @Column(name = "discipline_name", nullable = false)
     private String name; //Поле не может быть null, Строка не может быть пустой
-    @Column(name = "discipline_lectureHours")
+    @Column(name = "discipline_lectureHours", nullable = false)
     private long lectureHours;
-    @Column(name = "discipline_practiceHours")
+    @Column(name = "discipline_practiceHours", nullable = false)
     private Integer practiceHours; //Поле может быть null
-    @Column(name = "discipline_selfStudyHours")
+    @Column(name = "discipline_selfStudyHours", nullable = false)
     private int selfStudyHours;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "discipline_name")
+//    @OneToOne
+//    @MapsId
+//    @JoinColumn(name = "discipline_name")
+    @Column(name = "labwork")
     private LabWork labWork;
 
     public Discipline() {
     }
 
-    /**
-     * @param name name of subject
-     * @param lectureHours lecture hours of subject
-     * @param practiceHours practice hours of subject
-     * @param selfStudyHours selfstudy hours of subject
-     */
     public Discipline(String name, long lectureHours, Integer practiceHours, int selfStudyHours) {
         this.name = name;
         this.lectureHours = lectureHours;

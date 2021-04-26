@@ -14,6 +14,8 @@ import java.util.Optional;
  */
 public class ClientKeeper {
     private String token;
+    private String login;
+    private String password;
     private final String filename;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ClientNetConnector netConnector = new ClientNetConnector();
@@ -91,6 +93,7 @@ public class ClientKeeper {
                 working = false;
             default:
                 command.setToken(token);
+                command.setLogin(login);
                 String message = commandArgsJsonParser.fromObjectToString(command);
                 netConnector.sendMessage(message);
                 String response = Optional.ofNullable(netConnector.receiveMessage()).orElseThrow(InvalidServerAnswer::new);
@@ -101,6 +104,8 @@ public class ClientKeeper {
 
     private void authorize(){
         CommandArgs authorizationCommand = terminalKeeper.authorizeUser();
+        login = authorizationCommand.getArgs()[1];
+        password = authorizationCommand.getArgs()[2];
         netConnector.sendMessage(commandArgsJsonParser.fromObjectToString(authorizationCommand));
         CommandResponse authorizationCommandResponse = responseParser.fromStringToObject(netConnector.receiveMessage());
         token = authorizationCommandResponse.getResponse();
@@ -109,6 +114,7 @@ public class ClientKeeper {
     private Map<String, String[]> getCommandsMap(){
         CommandArgs requestCommandsMapCommand = new CommandArgs("request_map_of_commands", new String[]{});
         requestCommandsMapCommand.setToken(token);
+        requestCommandsMapCommand.setLogin(login);
         netConnector.sendMessage(commandArgsJsonParser.fromObjectToString(requestCommandsMapCommand));
         CommandResponse requestCommandsMapResponse = responseParser.fromStringToObject(netConnector.receiveMessage());
         String mapOfCommandsString = requestCommandsMapResponse.getResponse();

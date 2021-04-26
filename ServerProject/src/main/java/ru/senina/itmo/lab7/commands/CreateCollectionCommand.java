@@ -1,16 +1,14 @@
 package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.*;
-import ru.senina.itmo.lab7.labwork.LabWork;
 import ru.senina.itmo.lab7.parser.ParsingException;
 
-import java.util.LinkedList;
 import java.util.logging.Level;
 
 @CommandAnnotation(name = "create_collection", collectionKeeper = true, parser = true, filename = true)
 public class CreateCollectionCommand extends Command {
     private CollectionKeeper collectionKeeper;
-    private CollectionKeeperParser parser;
+    private CollectionParser parser;
     private String collectionString;
 
     public String getCollectionString() {
@@ -31,14 +29,14 @@ public class CreateCollectionCommand extends Command {
     }
 
     @Override
-    public void setParser(CollectionKeeperParser parser) {
+    public void setParser(CollectionParser parser) {
         this.parser = parser;
     }
 
     @Override
     protected CommandResponse doRun() throws InvalidArgumentsException {
         try {
-            collectionKeeper.setList(parser.fromStringToObject(collectionString).getList());
+            collectionKeeper.setList(parser.fromStringToObject(collectionString).getList(), getLogin());
         } catch (ParsingException e) {
             Logging.log(Level.WARNING, "Collection file was incorrect, collection wasn't updated with start values.");
             return new CommandResponse(2, getName(), "File was incorrect, collection will be empty!");

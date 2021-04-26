@@ -8,12 +8,13 @@
 
         <!-- Entity classes -->
         <class>ru.senina.itmo.lab7.testClasses.Student</class>
-        <class>ru.senina.itmo.lab7.testClasses.User</class>
+        <class>ru.senina.itmo.lab7.testClasses.TestUser</class>
         <class>ru.senina.itmo.lab7.testClasses.Address</class>
         <class>ru.senina.itmo.lab7.testClasses.StudentCoordinates</class>
         <class>ru.senina.itmo.lab7.labwork.LabWork</class>
         <class>ru.senina.itmo.lab7.labwork.Discipline</class>
         <class>ru.senina.itmo.lab7.labwork.Coordinates</class>
+        <class>ru.senina.itmo.lab7.Owner</class>
 
         <properties>
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver" /> <!-- DB Driver -->

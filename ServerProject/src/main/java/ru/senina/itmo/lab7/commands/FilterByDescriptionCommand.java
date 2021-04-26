@@ -4,7 +4,7 @@ import ru.senina.itmo.lab7.CollectionKeeper;
 import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
 import ru.senina.itmo.lab7.labwork.LabWork;
-import ru.senina.itmo.lab7.CollectionKeeperParser;
+import ru.senina.itmo.lab7.CollectionParser;
 import ru.senina.itmo.lab7.parser.ParsingException;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public class FilterByDescriptionCommand extends Command {
     private CollectionKeeper collectionKeeper;
     private String description;
-    private CollectionKeeperParser parser;
+    private CollectionParser parser;
 
     public FilterByDescriptionCommand() {
         super("filter_by_description description", "display elements whose description field value is equal to the given one");
@@ -28,7 +28,7 @@ public class FilterByDescriptionCommand extends Command {
     }
 
     @Override
-    public void setParser(CollectionKeeperParser parser) {
+    public void setParser(CollectionParser parser) {
         this.parser = parser;
     }
 
