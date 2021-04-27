@@ -111,25 +111,53 @@ public class ClientNetConnector {
         try {
             //TODO: sleep for while-true
             while (true) {
+                if (debug) {
+                    System.out.println("DEBUG: select");
+                }
                 selector.select();
                 ByteBuffer buffer = ByteBuffer.allocate(1024);
                 Set<SelectionKey> selectedKeys = selector.selectedKeys();
                 Iterator<SelectionKey> iterator = selectedKeys.iterator();
                 while (iterator.hasNext()) {
                     SelectionKey selectionKey = iterator.next();
-//                    if (debug) {
-//                        System.out.println("DEBUG: Key: " + selectionKey.readyOps());
-//                    }
+                    if (debug) {
+                        System.out.println("DEBUG: Key: " + selectionKey.readyOps());
+                    }
                     if (selectionKey.isReadable()) {
                         if (debug) {
                             System.out.println("DEBUG: Reading there was a key to read!");
                         }
                         SocketChannel clientSocketChannel = (SocketChannel) selectionKey.channel();
+
                         StringBuilder message = new StringBuilder();
-                        Thread.sleep(500);//FIXME Кослылище с Thread.sleep(500);
-                        while (clientSocketChannel.read(buffer) > 0){
+//                        Thread.sleep(500);//FIXME Кослылище с Thread.sleep(500);
+
+
+                        while(buffer.position() < 4){
+                            clientSocketChannel.read(buffer);
+                        }
+                        if (debug) {
+                            System.out.println("DEBUG: readFirst: " + buffer.position() + " bytes");
+                            System.out.println("DEBUG: lengthFirst: " + message.length());
+                        }
+                        int position = buffer.position();
+                        buffer.flip();
+                        int length = Integer.parseInt(new String(buffer.array(), 0, 4));
+                        buffer.position(position);
+                        message.append(new String(buffer.array(), 0, buffer.position()));
+                        buffer.flip();
+
+                        int readLength = position;
+                        while (clientSocketChannel.read(buffer) >=0 && readLength < length){
+                            if (debug) {
+                                System.out.println("DEBUG: read: " + buffer.position() + " bytes");
+                                System.out.println("DEBUG: lengthMessage: " + message.length());
+                                System.out.println("DEBUG: length: " + length);
+                                System.out.println("DEBUG: readLength: " + readLength);
+                            }
+                            readLength += buffer.position();
                             message.append(new String(buffer.array(), 0, buffer.position()));
-                            buffer.compact();
+                            buffer.flip();
                         }
 
                         if (debug) {
@@ -140,7 +168,7 @@ public class ClientNetConnector {
                     iterator.remove();
                 }
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException /*| InterruptedException*/ e) {
             if (debug) {
                 System.out.println("DEBUG: Exception in sending a message " + e.getLocalizedMessage());
             }

@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 
@@ -51,8 +53,10 @@ public class ServerNetConnector {
     }
 
     public void sendResponse(String str){
-        out.println(str);
-        Logging.log(Level.INFO, "Message '" + str + "' was send.");
+        byte[] bytes = str.getBytes();
+        //4 bytes because int is 4 bytes
+        out.println((bytes.length + 4) + str);
+        Logging.log(Level.INFO, "Message '" + str + "' was send. Length " + bytes.length);
     }
 
     public void stopConnection() {

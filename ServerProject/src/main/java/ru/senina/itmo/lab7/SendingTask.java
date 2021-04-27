@@ -15,5 +15,6 @@ public class SendingTask implements Runnable{
     @Override
     public void run() {
             net.sendResponse(response);
+            net.stopConnection();
     }
 }
