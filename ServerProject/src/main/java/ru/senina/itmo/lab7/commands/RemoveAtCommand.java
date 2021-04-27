@@ -21,7 +21,7 @@ public class RemoveAtCommand extends Command{
 
     @Override
     protected CommandResponse doRun() {
-        return new CommandResponse(1, getName(), collectionKeeper.removeAt(index));
+        return new CommandResponse(1, getName(), collectionKeeper.removeAt(index, getToken()));
     }
 
     @Override

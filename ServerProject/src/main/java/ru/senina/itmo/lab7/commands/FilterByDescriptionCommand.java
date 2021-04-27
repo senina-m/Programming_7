@@ -35,7 +35,6 @@ public class FilterByDescriptionCommand extends Command {
     @Override
     protected CommandResponse doRun() {
         try {
-            collectionKeeper.sort();
             List<LabWork> resultElements = collectionKeeper.filterByDescription(description);
             if(resultElements.size() != 0){
                 StringBuilder result = new StringBuilder();

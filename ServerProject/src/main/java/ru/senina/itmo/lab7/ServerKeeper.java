@@ -21,17 +21,19 @@ public class ServerKeeper {
             SendingTask sendingTask = new SendingTask(net);
             ProcessingTask processingTask = new ProcessingTask(controller, sendingTask);
             ReadingTask readingTask = new ReadingTask(net, processThreads, processingTask);
-            if (net.startConnection(serverPort)) {
-                readThreads.execute(readingTask);
+            while (!net.startConnection(serverPort)) {
+                net.startConnection(serverPort);
             }
-            try {
-                readThreads.shutdown();
-                readThreads.awaitTermination(3, TimeUnit.SECONDS);
-                processThreads.shutdown();
-                processThreads.awaitTermination(3, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                Logging.log(Level.WARNING, "Termination error " + e.toString());
-            }
+            readThreads.execute(readingTask);
+            Logging.log(Level.INFO, "readThreads was executed for readingTask");
+        }
+        try {
+            readThreads.shutdown();
+            readThreads.awaitTermination(3, TimeUnit.SECONDS);
+            processThreads.shutdown();
+            processThreads.awaitTermination(3, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Logging.log(Level.WARNING, "Termination error " + e.toString());
         }
     }
 

@@ -1,6 +1,7 @@
 package ru.senina.itmo.lab7;
 
 
+import org.junit.jupiter.api.Test;
 import ru.senina.itmo.lab7.testClasses.StudentCoordinates;
 import ru.senina.itmo.lab7.testClasses.Student;
 
@@ -31,7 +32,8 @@ public class TestDataBaseManager {
         return null;
     }
 
-    public static void main(String[] argv) {
+    @Test
+    public void basicOperationsToDB() {
         // Create two Students
         create(1, "Alice", 22, new StudentCoordinates(2,4));
         create(2, "Bob", 20,  new StudentCoordinates(5,4));
@@ -52,11 +54,13 @@ public class TestDataBaseManager {
         }
 
         // NEVER FORGET TO CLOSE THE ENTITY_MANAGER_FACTORY
+        assert entityManagerFactory != null;
         entityManagerFactory.close();
     }
 
-    public static void create(int id, String name, int age, StudentCoordinates address) {
+    public void create(int id, String name, int age, StudentCoordinates address) {
         // Create an EntityManager
+        assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
 
@@ -91,11 +95,12 @@ public class TestDataBaseManager {
         }
     }
 
-    public static List<Student> readAll() {
+    public List<Student> readAll() {
 
         List<Student> students = null;
 
         // Create an EntityManager
+        assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
 
@@ -124,8 +129,9 @@ public class TestDataBaseManager {
         return students;
     }
 
-    public static void delete(int id) {
+    public void delete(int id) {
         // Create an EntityManager
+        assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
 
@@ -156,8 +162,9 @@ public class TestDataBaseManager {
         }
     }
 
-    public static void update(int id, String name, int age, StudentCoordinates address) {
+    public void update(int id, String name, int age, StudentCoordinates address) {
         // Create an EntityManager
+        assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
 

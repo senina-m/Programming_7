@@ -23,6 +23,8 @@ dependencies {
     implementation 'org.hibernate:hibernate-core:5.4.2.Final'
     implementation 'org.hibernate:hibernate-entitymanager:5.4.2.Final'
 
+    implementation 'commons-codec:commons-codec:1.15'
+
     //Jackson package
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
     implementation 'com.jwebmp.jackson.datatype:jackson-datatype-jsr310:0.63.0.19'

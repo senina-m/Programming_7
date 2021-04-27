@@ -9,18 +9,20 @@ public class RegisterCommand extends Command{
     private String password;
     private String login;
 
-    protected RegisterCommand(String name, String description) {
+    public RegisterCommand() {
         super("register", "registers user");
     }
 
     @Override
     protected CommandResponse doRun() {
         try {
-            String token = Optional.ofNullable(DBManager.register(login, password)).orElseThrow(UserAlreadyExistsException::new);
+            String token = Optional.ofNullable(DBManager.register(login, password)).orElseThrow(DataBaseProcessException::new);
             return new CommandResponse(1, getName(), token);
         }catch (UserAlreadyExistsException e){
             //todo: write table with exceptions values
             return new CommandResponse(5, getName(), "User with such login already exist!" );
+        }catch (DataBaseProcessException e){
+            return new CommandResponse(6, getName(), "Some problems with processing register command in DB!" );
         }
     }
 

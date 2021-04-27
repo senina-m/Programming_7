@@ -2,6 +2,7 @@ package ru.senina.itmo.lab7;
 
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -15,9 +16,9 @@ import java.util.Set;
 public class ClientNetConnector {
     private SocketChannel serverSocketChannel;
     private Selector selector;
-    private final boolean debug = false;
+    private final boolean debug = ClientMain.DEBUG;
 
-    public void startConnection(String host, int serverPort) {
+    public boolean startConnection(String host, int serverPort) throws RefusedConnectionException {
         try {
             selector = Selector.open();
             if (debug) {
@@ -43,15 +44,24 @@ public class ClientNetConnector {
                             if (debug) {
                                 System.out.println("DEBUG: Finished to connect! Client is connected to server!");
                             }
+                            return true;
                         }
-                        return;
+                        break;
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (ConnectException e) {
             if (debug) {
-                System.out.println("DEBUG: Exception in connecting " + e.getLocalizedMessage());
+                System.out.println("WARNING: Server is not available! " + e);
+                return false;
+            }else {
+                throw new RefusedConnectionException();
             }
+        } catch (IOException e){
+            if (debug) {
+                System.out.println("WARNING: Exception in connecting! " + e);
+            }
+            return false;
         }
     }
 
@@ -116,6 +126,7 @@ public class ClientNetConnector {
                         }
                         SocketChannel clientSocketChannel = (SocketChannel) selectionKey.channel();
                         StringBuilder message = new StringBuilder();
+                        Thread.sleep(500);//FIXME Кослылище с Thread.sleep(500);
                         while (clientSocketChannel.read(buffer) > 0){
                             message.append(new String(buffer.array(), 0, buffer.position()));
                             buffer.compact();
@@ -129,7 +140,7 @@ public class ClientNetConnector {
                     iterator.remove();
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             if (debug) {
                 System.out.println("DEBUG: Exception in sending a message " + e.getLocalizedMessage());
             }

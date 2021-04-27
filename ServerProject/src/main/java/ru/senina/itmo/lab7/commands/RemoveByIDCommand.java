@@ -22,7 +22,7 @@ public class RemoveByIDCommand extends Command {
 
     @Override
     protected CommandResponse doRun(){
-        return new CommandResponse(1, getName(), collectionKeeper.removeById(id));
+        return new CommandResponse(1, getName(), collectionKeeper.removeById(id, getToken()));
     }
 
     @Override

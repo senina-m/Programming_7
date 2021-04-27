@@ -14,8 +14,6 @@ import java.util.Optional;
  */
 public class ClientKeeper {
     private String token;
-    private String login;
-    private String password;
     private final String filename;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ClientNetConnector netConnector = new ClientNetConnector();
@@ -23,6 +21,7 @@ public class ClientKeeper {
     private int numberOfCommands = 0;
     private int recursionLevel = 0;
     private boolean working = true;
+    private final boolean debug = ClientMain.DEBUG;
     private final JsonParser<CommandResponse> responseParser = new JsonParser<>(objectMapper, CommandResponse.class);
     private final JsonParser<CommandArgs> commandArgsJsonParser = new JsonParser<>(objectMapper, CommandArgs.class);
     /**
@@ -48,8 +47,13 @@ public class ClientKeeper {
             System.exit(0);
         }
 
-        netConnector.startConnection("localhost", serverPort);
         terminalKeeper = new TerminalKeeper(filename);
+        try {
+            netConnector.startConnection("localhost", serverPort);
+        }catch (RefusedConnectionException e){
+            throw new RuntimeException(" Server is not available! java.net.ConnectException");
+            //todo: catch exception and try again
+        }
 
 
         //todo: проверить, что ответ пришёл именно на нужную команду
@@ -93,7 +97,6 @@ public class ClientKeeper {
                 working = false;
             default:
                 command.setToken(token);
-                command.setLogin(login);
                 String message = commandArgsJsonParser.fromObjectToString(command);
                 netConnector.sendMessage(message);
                 String response = Optional.ofNullable(netConnector.receiveMessage()).orElseThrow(InvalidServerAnswer::new);
@@ -104,17 +107,20 @@ public class ClientKeeper {
 
     private void authorize(){
         CommandArgs authorizationCommand = terminalKeeper.authorizeUser();
-        login = authorizationCommand.getArgs()[1];
-        password = authorizationCommand.getArgs()[2];
         netConnector.sendMessage(commandArgsJsonParser.fromObjectToString(authorizationCommand));
-        CommandResponse authorizationCommandResponse = responseParser.fromStringToObject(netConnector.receiveMessage());
-        token = authorizationCommandResponse.getResponse();
+        CommandResponse authResponse = responseParser.fromStringToObject(netConnector.receiveMessage());
+        if( authResponse.getCode() != 5){ //Code 5 - exception such user already exist
+            terminalKeeper.printResponse(new CommandResponse(authResponse.getCode(), authResponse.getCommandName(),
+                    "User with such login already exist! Try to register again!"));
+            authorize();
+        }else {
+            token = authResponse.getResponse();
+        }
     }
 
     private Map<String, String[]> getCommandsMap(){
         CommandArgs requestCommandsMapCommand = new CommandArgs("request_map_of_commands", new String[]{});
         requestCommandsMapCommand.setToken(token);
-        requestCommandsMapCommand.setLogin(login);
         netConnector.sendMessage(commandArgsJsonParser.fromObjectToString(requestCommandsMapCommand));
         CommandResponse requestCommandsMapResponse = responseParser.fromStringToObject(netConnector.receiveMessage());
         String mapOfCommandsString = requestCommandsMapResponse.getResponse();

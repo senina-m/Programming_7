@@ -156,4 +156,8 @@ public class LabWork  implements Serializable {
         this.difficulty = labWork.difficulty;
         this.discipline = labWork.discipline;
     }
+
+    public long compareById(LabWork labWork) {
+        return (this.getId() - labWork.getId());
+    }
 }

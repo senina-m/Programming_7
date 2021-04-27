@@ -8,15 +8,15 @@ import ru.senina.itmo.lab7.parser.ParsingException;
 
 import java.util.List;
 
-public class CollectionParser extends JsonParser<CollectionKeeper> {
+public class CollectionParser extends JsonParser<LabWorkList> {
 
-    public CollectionParser(ObjectMapper objectMapper, Class<CollectionKeeper> classT) {
+    public CollectionParser(ObjectMapper objectMapper, Class<LabWorkList> classT) {
         super(objectMapper, classT);
     }
 
-    public String fromCollectionToStringElements(CollectionKeeper object) throws ParsingException {
+    public String fromCollectionToStringElements(LabWorkList labWorkList) throws ParsingException {
         StringBuilder resultString = new StringBuilder();
-        List<LabWork> list = object.getList();
+        List<LabWork> list = labWorkList.getLabWorkList();
         for (int i = 0; i < list.size(); i++) {
             resultString.append("\nElement ").append(i + 1).append(":\n").append(fromElementToString(list.get(i)));
         }
@@ -40,9 +40,9 @@ public class CollectionParser extends JsonParser<CollectionKeeper> {
     }
 
     @Override
-    public String fromObjectToString(CollectionKeeper collectionKeeper) throws ParsingException {
+    public String fromObjectToString(LabWorkList labWorkList) throws ParsingException {
         try {
-            return CollectionParser.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(collectionKeeper.getList());
+            return CollectionParser.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(labWorkList);
         } catch (JsonProcessingException e) {
             throw new ParsingException("Something wrong with parsing collection to string.");
         }

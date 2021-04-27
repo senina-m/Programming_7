@@ -3,6 +3,7 @@ package ru.senina.itmo.lab7.commands;
 import ru.senina.itmo.lab7.CollectionKeeper;
 import ru.senina.itmo.lab7.CollectionParser;
 import ru.senina.itmo.lab7.CommandResponse;
+import ru.senina.itmo.lab7.LabWorkList;
 import ru.senina.itmo.lab7.parser.ParsingException;
 
 /**
@@ -30,8 +31,7 @@ public class ShowCommand extends CommandWithoutArgs{
     protected CommandResponse doRun(){
         try {
             if(collectionKeeper.getAmountOfElements()!= 0) {
-                collectionKeeper.sort();
-                return new CommandResponse(1, getName(), parser.fromCollectionToStringElements(collectionKeeper));
+                return new CommandResponse(1, getName(), parser.fromCollectionToStringElements(new LabWorkList(collectionKeeper.getList())));
             } else {
                 return new CommandResponse(2, getName(), "No elements in collection.");
             }

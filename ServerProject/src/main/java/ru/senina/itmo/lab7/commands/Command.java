@@ -17,8 +17,6 @@ public abstract class Command {
     private final String description;
     @Getter @Setter
     private String token;
-    @Getter @Setter
-    private String login;
 
     protected Command(String name, String description) {
         this.name = name;
@@ -27,7 +25,6 @@ public abstract class Command {
 
     public void setArgs(CommandArgs args) {
         this.args = args.getArgs();
-        this.login = args.getLogin();
         this.token = args.getToken();
     }
 
@@ -71,7 +68,7 @@ public abstract class Command {
     }
 
     protected void checkIfLogin() throws UnLoginUserException {
-        if (!DBManager.checkLogin(login, token)){
+        if (!DBManager.checkLogin(token)){
             throw new UnLoginUserException();
         };
     }

@@ -9,7 +9,7 @@ import java.util.logging.Level;
 
 public class Model {
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final CollectionParser COLLECTION_PARSER = new CollectionParser(objectMapper, CollectionKeeper.class);
+    private static final CollectionParser COLLECTION_PARSER = new CollectionParser(objectMapper, LabWorkList.class);
     private static final Map<String, Command> commandMap = createCommandMap();
     private static final CollectionKeeper collectionKeeper = new CollectionKeeper();
 
@@ -56,6 +56,7 @@ public class Model {
         commandMap.put("execute_script", new ExecuteScriptCommand());
         commandMap.put("exit", new ExitCommand());
         commandMap.put("request_map_of_commands", new RequestCommandsMapCommand(commandMap));
+        commandMap.put("register", new RegisterCommand());
         return commandMap;
     }
 

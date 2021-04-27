@@ -21,6 +21,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
     implementation 'com.jwebmp.jackson.datatype:jackson-datatype-jsr310:0.63.0.19'
     implementation 'junit:junit:4.13.1'
+
+    implementation 'commons-codec:commons-codec:1.15'
+
     compile project(":LibraryProject")
 }
 

@@ -22,7 +22,7 @@ public class RemoveGreaterCommand extends CommandWithoutArgs{
 
     @Override
     protected CommandResponse doRun() {
-        return new CommandResponse(1, getName(), collectionKeeper.removeGreater(element));
+        return new CommandResponse(1, getName(), collectionKeeper.removeGreater(element, getToken()));
     }
 
     public LabWork getElement() {

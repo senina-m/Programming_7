@@ -19,6 +19,6 @@ public class ClearCommand extends CommandWithoutArgs{
 
     @Override
     protected CommandResponse doRun() {
-        return new CommandResponse(1, getName(), collectionKeeper.clear());
+        return new CommandResponse(1, getName(), collectionKeeper.clear(getToken()));
     }
 }

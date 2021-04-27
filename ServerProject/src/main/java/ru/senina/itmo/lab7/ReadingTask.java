@@ -18,6 +18,7 @@ public class ReadingTask implements Runnable {
     @Override
     public void run() {
         try {
+            Logging.log(Level.INFO, "The Reading task is in!");
             final String command = net.nextCommand(3);
             processingTask.setCommand(command);
             processThreads.execute(processingTask);

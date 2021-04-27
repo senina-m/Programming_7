@@ -1,5 +1,6 @@
 package ru.senina.itmo.lab7;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import ru.senina.itmo.lab7.labwork.Coordinates;
 import ru.senina.itmo.lab7.labwork.Difficulty;
 import ru.senina.itmo.lab7.labwork.Discipline;
@@ -9,6 +10,7 @@ import ru.senina.itmo.lab7.parser.Parser;
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.*;
 
 
@@ -18,6 +20,7 @@ public class TerminalKeeper {
     private boolean script = false;
     private Map<String, String[]> commands;
     private final String filename;
+    private final boolean debug = ClientMain.DEBUG;
 
 
     public TerminalKeeper(String filename) {
@@ -180,15 +183,22 @@ public class TerminalKeeper {
     }
 
     public CommandArgs authorizeUser() {
-        System.out.println("Do you have an account or you to register? Type \"sign in\" or \"log in\".");
-        while (true) {
-            switch (in.nextLine().trim()) {
-                case ("sign in"):
-                    return signIn();
+        if(debug){//fixme: remove debug
+            CommandArgs testCommandRegistration = new CommandArgs();
+            testCommandRegistration.setArgs(new String[]{"register","masha", encrypt("senina")});
+            testCommandRegistration.setCommandName("register");
+            return testCommandRegistration;
+        }else {
+            System.out.println("Do you have an account or you to register? Type \"sign in\" or \"log in\".\n >");
+            while (true) {
+                switch (in.nextLine().trim()) {
+                    case ("sign in"):
+                        return signIn();
                     case ("log in"):
-                    return lonIn();
-                default:
-                    System.out.println("Incorrect input! Try to type again \"sign in\" or \"log in\".");
+                        return lonIn();
+                    default:
+                        System.out.println("Incorrect input! Try to type again \"sign in\" or \"log in\".");
+                }
             }
         }
     }
@@ -199,7 +209,9 @@ public class TerminalKeeper {
     public CommandArgs signIn(){
         //todo: read password twice
         CommandArgs signInCommand = new CommandArgs();
-        signInCommand.setArgs(new String[]{"register",getLogin(), encrypt(getPassword())});
+        signInCommand.setCommandName("register");
+        signInCommand.setLogin(getLogin());
+        signInCommand.setArgs(new String[]{signInCommand.getCommandName(),signInCommand.getLogin(), encrypt(getPassword())});
         return signInCommand;
 //        while(!password.equals(new String(console.readPassword("Please repeat your password: ")))){
 //            System.out.println("Your passwords aren't identical. Try again!");
@@ -209,7 +221,9 @@ public class TerminalKeeper {
     /** I have to put login first and then password */
     public CommandArgs lonIn(){
         CommandArgs logInCommand = new CommandArgs();
-        logInCommand.setArgs(new String[]{"authorize",getLogin(), encrypt(getPassword())});
+        logInCommand.setCommandName("authorize");
+        logInCommand.setLogin(getLogin());
+        logInCommand.setArgs(new String[]{logInCommand.getCommandName(),logInCommand.getLogin(), encrypt(getPassword())});
         return logInCommand;
     }
 
@@ -224,16 +238,17 @@ public class TerminalKeeper {
     }
 
     private String getPassword(){
-        Console console = System.console();
-        String password = new String(console.readPassword("Please enter your password: ")).trim();
-        while (password.equals("")){
-            password = new String(console.readPassword("You entered empty password! Please try again: ")).trim();
-        }
-        return password;
+            // не работает Console при запуске в ide (в терминале должно работать, но я не проверяла)
+            Console console = System.console();
+            String password = new String(console.readPassword("Please enter your password: ")).trim();
+            while (password.equals("")) {
+                password = new String(console.readPassword("You entered empty password! Please try again: ")).trim();
+            }
+            return password;
     }
 
     private String encrypt(String password){
-        //todo: return encrypted password
-        return null;
+        String solt = "klj;kjgsdkj";
+        return DigestUtils.md5Hex(solt + password);
     }
 }

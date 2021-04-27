@@ -80,30 +80,30 @@ public class testJPA {
             user.setGender(Gender.RATTUS);
             Address address = new Address();
             address.setHouse(12);
-            address.setStreet("ratland");
+            address.setStreet("catLand");
 
             user.setAddress(address);
             address.setTestUser(user);
 
             entityManager.persist(user);
+            address.setStreet("ratland");
 //            entityManager.persist(address); It will be created automatically
             transaction.commit();
 
             assert1to1InsertedData();
-            deleteTable("Address");
-            deleteTable("TestUser");
         } catch (Exception ex) {
             if (transaction != null) {
                 transaction.rollback();
             }
             ex.printStackTrace();
+        }finally {
             deleteTable("Address");
             deleteTable("TestUser");
         }
     }
 
     private void assert1to1InsertedData() {
-        Query query = entityManager.createQuery("FROM TestUser");
+        Query query = entityManager.createQuery("SELECT users FROM TestUser users", TestUser.class);
         @SuppressWarnings("unchecked") List<TestUser> userList = query.getResultList();
 
         assertNotNull(userList);

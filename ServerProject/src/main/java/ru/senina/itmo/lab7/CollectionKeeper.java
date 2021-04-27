@@ -44,9 +44,9 @@ public class CollectionKeeper {
         return dateFormat.format(time);
     }
 
-    public String updateID(long id, LabWork element) {
+    public String updateID(long id, LabWork element, String token) {
         try {
-            DBManager.updateById(element, id);
+            DBManager.updateById(element, id, token);
             return "Element with id: " + id + " was successfully updated.";
         } catch (Exception e) {
             return "There is no element with id: " + id + " in collection.";
@@ -54,9 +54,9 @@ public class CollectionKeeper {
         }
     }
 
-    public String add(LabWork element, String login) {
+    public String add(LabWork element, String token) {
         try {
-            DBManager.addElement(element, login);
+            DBManager.addElement(element, token);
             return "Element with id: " + element.getId() + " was successfully added.";
         } catch (Exception e) {
             Logging.log(Level.WARNING, "Something wrong with adding element to collection. (Warning from collectionKeeper)" + e.getMessage());
@@ -65,8 +65,9 @@ public class CollectionKeeper {
         }
     }
 
-    public String removeById(long id) {
+    public String removeById(long id, String token) {
         try {
+            DBManager.removeById(id, token);
             return "Element with id: " + id + " was successfully removed.";
         }catch (Exception e){
             return "There is no element with id: " + id + " in collection.";
@@ -74,9 +75,9 @@ public class CollectionKeeper {
         }
     }
 
-    public String clear() {
+    public String clear(String token) {
         try {
-            DBManager.clear();
+            DBManager.clear(token);
             return "The collection was successfully cleared.";
         }catch (Exception e){
             Logging.log(Level.WARNING, "Something wrong with clearing of collection. (Warning from collectionKeeper)" + e.getMessage());
@@ -85,9 +86,9 @@ public class CollectionKeeper {
         }
     }
 
-    public String removeAt(int index) {
+    public String removeAt(int index, String token) {
         try {
-            DBManager.removeATIndex(index);
+            DBManager.removeAtIndex(index, token);
             return "Element with index " + index + " was successfully removed.";
         } catch (Exception e) {
             //todo: possess different exceptions
@@ -95,23 +96,9 @@ public class CollectionKeeper {
         }
     }
 
-
-    public String sort() {
-        //todo: дописать проверку пуста ли коллеция (?)
+    public String removeGreater(LabWork element, String token) {
         try {
-            DBManager.sort();
-            return "Collection was successfully sort.";
-        }catch (Exception e){
-            Logging.log(Level.WARNING, "Something wrong with sorting collection. (Warning from collectionKeeper)" + e.getMessage());
-            //todo: possess different exceptions
-            throw new RuntimeException("Something wrong with sorting collection. (Warning from collectionKeeper) " + e.getMessage());
-        }
-    }
-
-
-    public String removeGreater(LabWork element) {
-        try {
-            DBManager.removeGreater(element);
+            DBManager.removeGreater(element, token);
             return "All elements greater then entered were successfully removed.";
         }catch (Exception e){
             Logging.log(Level.WARNING, "Something wrong with removing_greater elements of collection. (Warning from collectionKeeper)" + e.getMessage());
@@ -145,8 +132,7 @@ public class CollectionKeeper {
     @JsonIgnore
     public List<LabWork> getSortedList() {
         try {
-            DBManager.sort();
-            return DBManager.readAll();
+            return DBManager.getSortedList();
         }catch (Exception e){
             Logging.log(Level.WARNING, "Something wrong with getSortedList of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions

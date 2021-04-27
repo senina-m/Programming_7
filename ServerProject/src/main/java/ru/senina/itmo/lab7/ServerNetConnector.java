@@ -26,10 +26,10 @@ public class ServerNetConnector {
             return true;
         } catch (IOException e){
             //TODO: обработать ошибки UnknownHostException отдельно?
-            Logging.log(Level.WARNING, "Exception during starting connection. " + e.getLocalizedMessage());
+//            Logging.log(Level.WARNING, "Exception during starting connection. " + e.getLocalizedMessage());
+            return false;
 //            throw new RuntimeException(e);
         }
-        return false;
     }
 
     public String nextCommand(int attempts) throws TimeoutException{
