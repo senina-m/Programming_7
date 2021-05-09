@@ -18,10 +18,10 @@ public class AuthorizeCommand extends Command{
     protected CommandResponse doRun() {
         try {
             String token = Optional.ofNullable(DBManager.refreshToken(login, password)).orElseThrow(RuntimeException::new);
-            return new CommandResponse(1, getName(), token);
+            return new CommandResponse(Status.OK, getName(), token);
         }catch (Exception e){
             //todo: write table with exceptions values
-            return new CommandResponse(5, getName(), "Something wrong with refreshing token in authorize command!" );
+            return new CommandResponse(Status.REGISTRATION_FAIL, getName(), "Something wrong with refreshing token in authorize command!" );
         }
     }
 

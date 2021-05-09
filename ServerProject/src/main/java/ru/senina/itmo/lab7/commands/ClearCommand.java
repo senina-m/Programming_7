@@ -2,6 +2,7 @@ package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
 import ru.senina.itmo.lab7.CommandResponse;
+import ru.senina.itmo.lab7.Status;
 
 /**
  * Command clear collection - delete all elements
@@ -19,6 +20,6 @@ public class ClearCommand extends CommandWithoutArgs{
 
     @Override
     protected CommandResponse doRun() {
-        return new CommandResponse(1, getName(), collectionKeeper.clear(getToken()));
+        return new CommandResponse(Status.OK, getName(), collectionKeeper.clear(getToken()));
     }
 }

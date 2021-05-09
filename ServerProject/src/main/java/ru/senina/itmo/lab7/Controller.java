@@ -27,7 +27,7 @@ public class Controller {
             Logging.log(Level.INFO, "Command " + commandResponse.getCommandName() + " was executed.");
             return commandResponseParser.fromObjectToString(commandResponse);
         }else {
-            return commandResponseParser.fromObjectToString(new CommandResponse(4, "none", "Command came to server invalid!"));
+            return commandResponseParser.fromObjectToString(new CommandResponse(Status.NULLABLE_COMMAND, "none", "Command came to server invalid!"));
         }
     }
 }

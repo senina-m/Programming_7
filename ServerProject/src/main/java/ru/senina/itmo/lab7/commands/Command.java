@@ -58,9 +58,6 @@ public abstract class Command {
         return description;
     }
 
-    public void setElement(LabWork element) {
-    }
-
     public void setCollectionKeeper(CollectionKeeper collectionKeeper) {
     }
 

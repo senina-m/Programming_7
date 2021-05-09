@@ -66,7 +66,7 @@ public class ClientKeeper {
                 CommandArgs command = terminalKeeper.readNextCommand();
                 newCommand(command);
             }catch (InvalidServerAnswer e){
-                terminalKeeper.printResponse(new CommandResponse(-1, "Exception in server answer", "Sorry, server failed to process your command. Please, try to run it again."));
+                terminalKeeper.printResponse(new CommandResponse(Status.NETWORK_EXCEPTION, "Exception in server answer", "Sorry, server failed to process your command. Please, try to run it again."));
             }
         }
         netConnector.stopConnection();
@@ -84,10 +84,10 @@ public class ClientKeeper {
                             newCommand(c);
                         }
                     }catch (FileAccessException e){
-                        terminalKeeper.printResponse(new CommandResponse(numberOfCommands++, command.getCommandName(), e.getMessage()));
+                        terminalKeeper.printResponse(new CommandResponse(Status.ACCESS_EXCEPTION, command.getCommandName(), e.getMessage()));
                     }
                 } else {
-                    terminalKeeper.printResponse(new CommandResponse(numberOfCommands++, "execute_script",
+                    terminalKeeper.printResponse(new CommandResponse(Status.SCRIPT_RECURSION_EXCEPTION, "execute_script",
                             "You have stacked in the recursion! It's not allowed to deep in more then 10 levels. " +
                                     "\n No more recursive scripts would be executed!"));
                     recursionLevel = 0;
@@ -109,7 +109,7 @@ public class ClientKeeper {
         CommandArgs authorizationCommand = terminalKeeper.authorizeUser();
         netConnector.sendMessage(commandArgsJsonParser.fromObjectToString(authorizationCommand));
         CommandResponse authResponse = responseParser.fromStringToObject(netConnector.receiveMessage());
-        if( authResponse.getCode() != 5){ //Code 5 - exception such user already exist
+        if(!authResponse.getCode().equals(Status.REGISTRATION_FAIL)){ //Code 5 - exception such user already exist
             terminalKeeper.printResponse(new CommandResponse(authResponse.getCode(), authResponse.getCommandName(),
                     "User with such login already exist! Try to register again!"));
             authorize();

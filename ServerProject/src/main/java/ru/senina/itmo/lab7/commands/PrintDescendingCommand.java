@@ -2,6 +2,7 @@ package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
 import ru.senina.itmo.lab7.CommandResponse;
+import ru.senina.itmo.lab7.Status;
 import ru.senina.itmo.lab7.labwork.LabWork;
 import ru.senina.itmo.lab7.CollectionParser;
 import ru.senina.itmo.lab7.parser.ParsingException;
@@ -37,12 +38,12 @@ public class PrintDescendingCommand extends CommandWithoutArgs {
                 for(int i = list.size() - 1; i >= 0; i--){
                     result.append("Element ").append(i + 1).append(": \n").append(parser.fromElementToString(list.get(i))).append("\n");
                 }
-                return new CommandResponse(1, getName(), result.toString());
+                return new CommandResponse(Status.OK, getName(), result.toString());
             }else{
-                return new CommandResponse(2, getName(), "There is now elements in collection now.");
+                return new CommandResponse(Status.PROBLEM_PROCESSED, getName(), "There is now elements in collection now.");
             }
         }catch (ParsingException e){
-            return new CommandResponse(2, getName(), "Parsing in print_descending was failed");
+            return new CommandResponse(Status.PARSER_EXCEPTION, getName(), "Parsing in print_descending was failed");
         }
     }
 }

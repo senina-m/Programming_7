@@ -3,6 +3,7 @@ package ru.senina.itmo.lab7.commands;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.SetOfCommands;
+import ru.senina.itmo.lab7.Status;
 import ru.senina.itmo.lab7.parser.JsonParser;
 import ru.senina.itmo.lab7.parser.ParsingException;
 
@@ -23,9 +24,9 @@ public class RequestCommandsMapCommand extends CommandWithoutArgs{
         Map<String, String[]> commandArgsList = createCommandsArgsMap(map);
         try {
             String strMapOfCommands = new JsonParser<SetOfCommands>(new ObjectMapper(), SetOfCommands.class).fromObjectToString(new SetOfCommands(commandArgsList));
-            return new CommandResponse(1, getName(), strMapOfCommands);
+            return new CommandResponse(Status.OK, getName(), strMapOfCommands);
         } catch (ParsingException e){
-            return new CommandResponse(3, getName(), "Problems with parsing set of commands");
+            return new CommandResponse(Status.PARSER_EXCEPTION, getName(), "Problems with parsing set of commands");
         }
     }
 

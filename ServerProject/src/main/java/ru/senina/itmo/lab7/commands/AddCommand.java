@@ -1,7 +1,9 @@
 package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CollectionKeeper;
+import ru.senina.itmo.lab7.CommandArgs;
 import ru.senina.itmo.lab7.CommandResponse;
+import ru.senina.itmo.lab7.Status;
 import ru.senina.itmo.lab7.labwork.LabWork;
 
 /**
@@ -12,13 +14,10 @@ public class AddCommand extends CommandWithoutArgs{
     CollectionKeeper collectionKeeper;
     private LabWork element;
 
-    public LabWork getElement() {
-        return element;
-    }
-
     @Override
-    public void setElement(LabWork element) {
-        this.element = element;
+    public void setArgs(CommandArgs args) {
+        super.setArgs(args);
+        this.element = args.getElement();
     }
 
     public AddCommand() {
@@ -31,7 +30,7 @@ public class AddCommand extends CommandWithoutArgs{
 
     @Override
     protected CommandResponse doRun() {
-        return new CommandResponse(1, getName(), collectionKeeper.add(element, getToken()));
+        return new CommandResponse(Status.OK, getName(), collectionKeeper.add(element, getToken()));
     }
 
 }

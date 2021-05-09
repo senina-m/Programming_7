@@ -1,6 +1,7 @@
 package ru.senina.itmo.lab7.commands;
 
 import ru.senina.itmo.lab7.CommandResponse;
+import ru.senina.itmo.lab7.Status;
 
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class HelpCommand extends CommandWithoutArgs {
         for(Command command: commands.values()){
             string.append(command.getName()).append(" : ").append(command.getDescription()).append("\n");
         }
-        return new CommandResponse(1, getName(), string.toString());
+        return new CommandResponse(Status.OK, getName(), string.toString());
     }
 
     public Map<String, Command> getCommands() {

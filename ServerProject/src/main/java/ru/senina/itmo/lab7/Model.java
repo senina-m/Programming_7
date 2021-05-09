@@ -25,10 +25,6 @@ public class Model {
                 if (annotation.parser()) {
                     command.setParser(COLLECTION_PARSER);
                 }
-                if (annotation.element()) {
-                    //TODO: Check that element isn't null (have i do it here?)
-                    command.setElement(commandArgs.getElement());
-                }
             }
             return command.run();
     }

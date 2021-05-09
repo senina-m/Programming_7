@@ -1,10 +1,7 @@
 package ru.senina.itmo.lab7.commands;
 
-import ru.senina.itmo.lab7.CollectionKeeper;
-import ru.senina.itmo.lab7.CommandResponse;
-import ru.senina.itmo.lab7.InvalidArgumentsException;
+import ru.senina.itmo.lab7.*;
 import ru.senina.itmo.lab7.labwork.LabWork;
-import ru.senina.itmo.lab7.CollectionParser;
 import ru.senina.itmo.lab7.parser.ParsingException;
 
 import java.util.List;
@@ -42,12 +39,12 @@ public class FilterByDescriptionCommand extends Command {
                 for(int i = 0; i < resultElements.size(); i++){
                     result.append("Element ").append(i + 1).append(": \n").append(parser.fromElementToString(resultElements.get(i))).append("\n");
                 }
-                return new CommandResponse(1, getName(), result.toString());
+                return new CommandResponse(Status.OK, getName(), result.toString());
             }else{
-                return new CommandResponse(2, getName(), "There is now elements with description \"" + description + "\".");
+                return new CommandResponse(Status.PROBLEM_PROCESSED, getName(), "There is now elements with description \"" + description + "\".");
             }
         }catch (ParsingException e){
-            return new CommandResponse(3, getName(), "Parsing in filter_by_description was failed. " + e.getMessage());
+            return new CommandResponse(Status.PARSER_EXCEPTION, getName(), "Parsing in filter_by_description was failed. " + e.getMessage());
         }
     }
 

@@ -3,6 +3,7 @@ package ru.senina.itmo.lab7.commands;
 import ru.senina.itmo.lab7.CollectionKeeper;
 import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
+import ru.senina.itmo.lab7.Status;
 
 /**
  * Command removes element from collection by it's ID
@@ -22,7 +23,7 @@ public class RemoveByIDCommand extends Command {
 
     @Override
     protected CommandResponse doRun(){
-        return new CommandResponse(1, getName(), collectionKeeper.removeById(id, getToken()));
+        return new CommandResponse(Status.OK, getName(), collectionKeeper.removeById(id, getToken()));
     }
 
     @Override

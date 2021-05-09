@@ -9,12 +9,11 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 
 public class ClientNetConnector {
-    private SocketChannel serverSocketChannel;
+    private SocketChannel socketChannel;
     private Selector selector;
     private final boolean debug = ClientMain.DEBUG;
 
@@ -24,10 +23,10 @@ public class ClientNetConnector {
             if (debug) {
                 System.out.println("DEBUG: Selector is created!");
             }
-            serverSocketChannel = SocketChannel.open();
-            serverSocketChannel.configureBlocking(false);
-            serverSocketChannel.register(selector, SelectionKey.OP_CONNECT | SelectionKey.OP_WRITE | SelectionKey.OP_READ);
-            serverSocketChannel.connect(new InetSocketAddress(host, serverPort));
+            socketChannel = SocketChannel.open();
+            socketChannel.configureBlocking(false);
+            socketChannel.register(selector, SelectionKey.OP_CONNECT | SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+            socketChannel.connect(new InetSocketAddress(host, serverPort));
             if (debug) {
                 System.out.println("DEBUG: Starting to connect!");
             }
@@ -127,58 +126,40 @@ public class ClientNetConnector {
                         if (debug) {
                             System.out.println("DEBUG: Reading there was a key to read!");
                         }
-                        SocketChannel clientSocketChannel = (SocketChannel) selectionKey.channel();
+                        SocketChannel channel = (SocketChannel) selectionKey.channel();
 
-                        StringBuilder message = new StringBuilder();
-//                        Thread.sleep(500);//FIXME Кослылище с Thread.sleep(500);
-
-
-                        while(buffer.position() < 4){
-                            clientSocketChannel.read(buffer);
-                        }
-                        if (debug) {
-                            System.out.println("DEBUG: readFirst: " + buffer.position() + " bytes");
-                            System.out.println("DEBUG: lengthFirst: " + message.length());
-                        }
-                        int position = buffer.position();
-                        buffer.flip();
-                        int length = Integer.parseInt(new String(buffer.array(), 0, 4));
-                        buffer.position(position);
-                        message.append(new String(buffer.array(), 0, buffer.position()));
-                        buffer.flip();
-
-                        int readLength = position;
-                        while (clientSocketChannel.read(buffer) >=0 && readLength < length){
-                            if (debug) {
-                                System.out.println("DEBUG: read: " + buffer.position() + " bytes");
-                                System.out.println("DEBUG: lengthMessage: " + message.length());
-                                System.out.println("DEBUG: length: " + length);
-                                System.out.println("DEBUG: readLength: " + readLength);
-                            }
-                            readLength += buffer.position();
-                            message.append(new String(buffer.array(), 0, buffer.position()));
+                        List<Byte> list = new LinkedList<>();
+                        while (channel.read(buffer) >=0 || buffer.position() > 0){
                             buffer.flip();
+                            list.add(buffer.get());
+                            buffer.compact();
                         }
+                        String message = byteListToString(list).trim();
 
                         if (debug) {
                             System.out.println("DEBUG: Reading is finished! Received message: '" + message.toString().trim() + "'.");
                         }
-                        return message.toString();
+                        return message;
                     }
                     iterator.remove();
                 }
             }
         } catch (IOException /*| InterruptedException*/ e) {
             if (debug) {
-                System.out.println("DEBUG: Exception in sending a message " + e.getLocalizedMessage());
+                System.out.println("DEBUG: Exception in receiving message " + e.getLocalizedMessage());
             }
             return null;
+        } catch (NumberFormatException e){
+            if (debug) {
+                System.out.println("DEBUG: Exception in received message number of bytes in message was incorrect!");
+            }
+            throw new InvalidArgumentsException("Number of bytes in received message was incorrect");
         }
     }
 
     public void stopConnection() {
         try {
-            serverSocketChannel.close();
+            socketChannel.close();
             if (debug) {
                 System.out.println("DEBUG: Connection is closed!");
             }
@@ -187,5 +168,19 @@ public class ClientNetConnector {
                 System.out.println("DEBUG: Exception in closing connection " + e.getLocalizedMessage());
             }
         }
+    }
+
+    private static String byteListToString(List<Byte> list) {
+        if (list == null) {
+            return "";
+        }
+        byte[] array = new byte[list.size()];
+        int i = 0;
+        for (Byte current : list) {
+            array[i] = current;
+            i++;
+        }
+//        return new String(array, StandardCharsets.UTF_8);
+        return new String(array);
     }
 }

@@ -3,6 +3,7 @@ package ru.senina.itmo.lab7.commands;
 import ru.senina.itmo.lab7.CollectionKeeper;
 import ru.senina.itmo.lab7.CollectionParser;
 import ru.senina.itmo.lab7.CommandResponse;
+import ru.senina.itmo.lab7.Status;
 import ru.senina.itmo.lab7.parser.ParsingException;
 
 /**
@@ -29,11 +30,11 @@ public class MinByDifficultyCommand extends CommandWithoutArgs {
     @Override
     protected CommandResponse doRun() {
         try {
-            return new CommandResponse(1, getName(), "The less difficult subject is: \n" + parser.fromElementToString(collectionKeeper.minByDifficulty()));
+            return new CommandResponse(Status.OK, getName(), "The less difficult subject is: \n" + parser.fromElementToString(collectionKeeper.minByDifficulty()));
         } catch (IndexOutOfBoundsException e){
-            return new CommandResponse(2, getName(), "Can't do min_by_difficulty command. " + e.getMessage());
+            return new CommandResponse(Status.PROBLEM_PROCESSED, getName(), "Can't do min_by_difficulty command. " + e.getMessage());
         } catch ( ParsingException e){
-            return new CommandResponse(3, getName(), "Minimal element with such description was incorrect.");
+            return new CommandResponse(Status.PARSER_EXCEPTION, getName(), "Minimal element with such description was incorrect.");
         }
     }
 }

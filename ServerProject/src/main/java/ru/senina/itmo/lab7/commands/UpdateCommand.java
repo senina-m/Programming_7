@@ -1,8 +1,6 @@
 package ru.senina.itmo.lab7.commands;
 
-import ru.senina.itmo.lab7.CollectionKeeper;
-import ru.senina.itmo.lab7.CommandResponse;
-import ru.senina.itmo.lab7.InvalidArgumentsException;
+import ru.senina.itmo.lab7.*;
 import ru.senina.itmo.lab7.labwork.LabWork;
 
 /**
@@ -24,7 +22,7 @@ public class UpdateCommand extends Command{
 
     @Override
     protected CommandResponse doRun() {
-        return new CommandResponse(1, getName(), collectionKeeper.updateID(id, element, getToken()));
+        return new CommandResponse(Status.OK, getName(), collectionKeeper.updateID(id, element, getToken()));
     }
 
     @Override
@@ -42,13 +40,10 @@ public class UpdateCommand extends Command{
         }
     }
 
-    public LabWork getElement() {
-        return element;
-    }
-
     @Override
-    public void setElement(LabWork element) {
-        this.element = element;
+    public void setArgs(CommandArgs args) {
+        super.setArgs(args);
+        this.element = args.getElement();
     }
 
     public long getId() {

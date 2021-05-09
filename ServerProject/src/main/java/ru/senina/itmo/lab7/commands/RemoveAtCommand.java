@@ -3,6 +3,7 @@ package ru.senina.itmo.lab7.commands;
 import ru.senina.itmo.lab7.CollectionKeeper;
 import ru.senina.itmo.lab7.CommandResponse;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
+import ru.senina.itmo.lab7.Status;
 
 /** * Command that removes element on given place in collection
  */
@@ -21,7 +22,7 @@ public class RemoveAtCommand extends Command{
 
     @Override
     protected CommandResponse doRun() {
-        return new CommandResponse(1, getName(), collectionKeeper.removeAt(index, getToken()));
+        return new CommandResponse(Status.OK, getName(), collectionKeeper.removeAt(index, getToken()));
     }
 
     @Override
