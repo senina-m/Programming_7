@@ -1,6 +1,8 @@
 package ru.senina.itmo.lab7.labwork;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.Setter;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
 
 import javax.persistence.*;
@@ -23,9 +25,11 @@ public class Coordinates implements Serializable {
     @Column(name = "coordinates_y")
     private long y; //Значение поля должно быть больше -47
 
+    @Setter //TODO: check serialization
     @OneToOne
     @MapsId
     @JoinColumn(name = "coordinates_id")
+    @JsonIgnore
     private LabWork labWork;
 
     public Coordinates(int x, long y) throws InvalidArgumentsException {

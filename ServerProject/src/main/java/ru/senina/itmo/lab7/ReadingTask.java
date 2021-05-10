@@ -19,7 +19,7 @@ public class ReadingTask implements Runnable {
     public void run() {
         try {
             Logging.log(Level.INFO, "The Reading task is in!");
-            final String command = net.nextCommand(3);
+            final String command = net.receiveMessage(3);
             processingTask.setCommand(command);
             processThreads.execute(processingTask);
         } catch (TimeoutException e) {

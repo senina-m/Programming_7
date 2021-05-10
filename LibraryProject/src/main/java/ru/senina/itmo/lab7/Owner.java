@@ -21,7 +21,11 @@ public class Owner {
     @Column(name = "user_token")
     private String token;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.MERGE)
 // orphanRemoval = true - если мы хотим убивать все LabWork когда умер user
     private List<LabWork> labWork;
+
+    public void addLabWork(LabWork labWork){
+        this.labWork.add(labWork);
+    }
 }

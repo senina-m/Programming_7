@@ -3,6 +3,7 @@ package ru.senina.itmo.lab7.commands;
 import ru.senina.itmo.lab7.*;
 
 import java.util.Optional;
+import java.util.logging.Level;
 
 @CommandAnnotation(name = "register")
 public class RegisterCommand extends Command{

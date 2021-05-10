@@ -1,6 +1,7 @@
 package ru.senina.itmo.lab7;
 
 public enum Status {
+    //TODO: serialize me as int!
     OK(1),
     PROBLEM_PROCESSED(2),
     PARSER_EXCEPTION(3),

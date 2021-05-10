@@ -1,13 +1,12 @@
 package ru.senina.itmo.lab7;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
+import ru.senina.itmo.lab7.labwork.Discipline;
 import ru.senina.itmo.lab7.labwork.LabWork;
 
 import javax.persistence.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -17,6 +16,7 @@ import java.util.Random;
 import java.util.logging.Level;
 
 public class DBManager {
+    private static final int tokenLength = 50;
     private static final EntityManagerFactory entityManagerFactory = setEntityManagerFactory();
 
     public static EntityManagerFactory setEntityManagerFactory() {
@@ -36,8 +36,10 @@ public class DBManager {
         entityManagerFactory.close();
     }
 
-    public static void addElement(LabWork labWork, String token) {
-        //todo: no such elements before (or i can add more?)
+    public static void addElement(LabWork labWork, String token) throws DBProcessException {
+        //Создаём новую discipline если её до этого не было
+
+
         assert entityManagerFactory != null; //Прикольная штука надо про неё прочитать и научиться пользоваться
         EntityManager manager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
@@ -45,7 +47,16 @@ public class DBManager {
             transaction = manager.getTransaction();
             transaction.begin();
 
-            labWork.setOwner(manager.createQuery("SELECT owner FROM Owner owner WHERE owner.token =" + token, Owner.class).getSingleResult());
+            Owner owner = getOwnerByToken(manager, token);
+            labWork.setOwner(owner);
+            owner.addLabWork(labWork);
+            labWork.getCoordinates().setLabWork(labWork);
+
+            Discipline dbDiscipline = createDiscipline(labWork.getDiscipline());
+            dbDiscipline.addLabWork(labWork);
+            labWork.setDiscipline(dbDiscipline);
+//            manager.merge(labWork);
+//            update if exist and creat if not
             manager.persist(labWork);
 
             transaction.commit();
@@ -55,6 +66,7 @@ public class DBManager {
             }
             //TODO: check already exists exception
             Logging.log(Level.WARNING, "There were some exceptions during adding Element. " + ex.getMessage());
+            throw new DBProcessException();
         } finally {
             manager.close();
         }
@@ -124,7 +136,7 @@ public class DBManager {
             LabWork element = manager.find(LabWork.class, id);
             if (element.getOwner().getToken().equals(token)) {
                 element.copyElement(labWork); //TODO: check that Coordinates and Discipline copied correctly.
-                manager.persist(element);
+                manager.merge(element);
             }
 
             transaction.commit();
@@ -138,7 +150,7 @@ public class DBManager {
         }
     }
 
-    public static List<LabWork> getSortedList(){
+    public static List<LabWork> getSortedList() {
         List<LabWork> elements = null;
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
@@ -169,8 +181,7 @@ public class DBManager {
             transaction = manager.getTransaction();
             transaction.begin();
 
-            Owner owner = manager.createQuery("SELECT owner FROM Owner owner WHERE owner.token =" + token, Owner.class).getSingleResult();
-            owner.getLabWork().clear();
+            getOwnerByToken(manager, token).getLabWork().clear();
 
             transaction.commit();
         } catch (Exception ex) {
@@ -183,7 +194,7 @@ public class DBManager {
         }
     }
 
-    public static LabWork minByDifficulty(){
+    public static LabWork minByDifficulty() {
         LabWork element = null;
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
@@ -206,7 +217,7 @@ public class DBManager {
         return element;
     }
 
-    public static List<LabWork> filterByDescription(String string){
+    public static List<LabWork> filterByDescription(String string) {
         List<LabWork> elements = null;
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
@@ -215,8 +226,11 @@ public class DBManager {
         try {
             transaction = manager.getTransaction();
             transaction.begin();
-            //TODO: Дорогая, пахнет SQL иньекцией :)
-            elements = manager.createQuery("SELECT labwork FROM LabWork labwork WHERE labwork.description=" + string, LabWork.class).getResultList();
+
+            Query query = manager.createQuery("SELECT labwork FROM LabWork labwork WHERE labwork.description=:string", LabWork.class);
+            query.setParameter("string", string);
+            elements = query.getResultList(); //fixme list cast to list<labwork>
+
             transaction.commit();
         } catch (Exception ex) {
             if (transaction != null) {
@@ -229,7 +243,7 @@ public class DBManager {
         return elements;
     }
 
-    public static void removeGreater(LabWork labWork, String token){
+    public static void removeGreater(LabWork labWork, String token) {
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
@@ -238,8 +252,8 @@ public class DBManager {
             transaction = manager.getTransaction();
             transaction.begin();
             //TODO: Дорогая, пахнет SQL иньекцией :)
-            Owner owner = manager.createQuery("SELECT owner FROM Owner owner WHERE owner.token =" + token, Owner.class).getSingleResult();
-            for(LabWork element : owner.getLabWork()){
+            Owner owner = getOwnerByToken(manager, token);
+            for (LabWork element : owner.getLabWork()) {
                 if (element.compareById(labWork) < 0) {
                     manager.remove(element);
                 }
@@ -255,8 +269,8 @@ public class DBManager {
         }
     }
 
-    public static int countNumOfElements(){
-        int num  = 0;
+    public static long countNumOfElements() {
+        long num = 0;
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
@@ -264,7 +278,7 @@ public class DBManager {
         try {
             transaction = manager.getTransaction();
             transaction.begin();
-            num =  manager.createQuery("SELECT COUNT(id) FROM LabWork").getFirstResult();
+            num = manager.createQuery("SELECT COUNT(id) FROM LabWork", Long.class).getSingleResult();
             transaction.commit();
         } catch (Exception ex) {
             if (transaction != null) {
@@ -277,7 +291,7 @@ public class DBManager {
         return num;
     }
 
-    public static void removeAtIndex(int index, String token){
+    public static void removeAtIndex(int index, String token) {
         //TODO: test to this command
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
@@ -287,7 +301,7 @@ public class DBManager {
             transaction = manager.getTransaction();
             transaction.begin();
             LabWork element = manager.createQuery("SELECT labwork FROM LabWork labwork LIMIT 1 OFFSET " + index, LabWork.class).getSingleResult();
-            if(element.getOwner().getToken().equals(token)){
+            if (element.getOwner().getToken().equals(token)) {
                 manager.remove(element);
             }
             transaction.commit();
@@ -305,11 +319,11 @@ public class DBManager {
      * Get Login and Password create new User in DB.
      * Generate and return token
      */
-    public static String register(String login, String password) throws UserAlreadyExistsException{
+    public static String register(String login, String password) throws UserAlreadyExistsException {
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
-        String token;
+        String token = generateToken();
 
         try {
             transaction = manager.getTransaction();
@@ -318,7 +332,6 @@ public class DBManager {
             Owner user = new Owner();
             user.setLogin(login);
             user.setPassword(encryptPassword(password));
-            token = generateToken();
             user.setToken(token);
             manager.persist(user);
 
@@ -327,7 +340,7 @@ public class DBManager {
             //fixme read more about RollbackException
             throw new UserAlreadyExistsException();
         } catch (Exception ex) {
-//            System.out.println(ex.getClass().toString());
+            System.out.println(ex.getClass().toString());
             ex.printStackTrace();
             if (transaction != null) {
                 transaction.rollback();
@@ -335,7 +348,7 @@ public class DBManager {
         } finally {
             manager.close();
         }
-        return null;
+        return token;
     }
 
 
@@ -351,7 +364,7 @@ public class DBManager {
         try {
             transaction = manager.getTransaction();
             transaction.begin();
-            Owner user = manager.createQuery("SELECT owner FROM Owner owner WHERE owner.token =" + token, Owner.class).getSingleResult();
+            Owner user = getOwnerByToken(manager, token);
             result = token.equals(user.getToken());
             transaction.commit();
         } catch (Exception ex) {
@@ -370,7 +383,7 @@ public class DBManager {
      * Get Login and Password check if such exist.
      * Generate and return new token.
      */
-    public static String refreshToken(String login, String password){
+    public static String refreshToken(String login, String password) {
         //todo: check if no such user
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
@@ -381,7 +394,7 @@ public class DBManager {
             transaction = manager.getTransaction();
             transaction.begin();
             Owner user = manager.find(Owner.class, login);
-            if(user.getPassword().equals(encryptPassword(password))){
+            if (user.getPassword().equals(encryptPassword(password))) {
                 token = generateToken();
                 user.setToken(token);
             }
@@ -397,16 +410,69 @@ public class DBManager {
         return token;
     }
 
-    private static String generateToken(){
+//    private static String generateToken(){
+//        byte[] array = new byte[50];
+//        new Random().nextBytes(array);
+//        return new String(array, StandardCharsets.UTF_8);
+//    }
 
-        byte[] array = new byte[50];
-        new Random().nextBytes(array);
-        return new String(array, StandardCharsets.UTF_8);
-    }
-
-    private static String encryptPassword(String password){
+    private static String encryptPassword(String password) {
         String pepper = "kjh34kjhg*()&$2";
         return DigestUtils.md5Hex(password + pepper);
+    }
+
+    private static String generateToken() {
+        //На эти символы ругается: ~ &
+        char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRST1234567890!@#$%^*()_+".toCharArray();
+
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < tokenLength; i++) {
+            char c = chars[random.nextInt(chars.length)];
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    private static Owner getOwnerByToken(EntityManager manager, String token) {
+        Query query = manager.createQuery("SELECT owner FROM Owner owner WHERE owner.token=:token", Owner.class);
+        query.setParameter("token", token);
+        return (Owner) query.getSingleResult();
+    }
+
+    private static Discipline createDiscipline(Discipline discipline) {
+        assert entityManagerFactory != null;
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = null;
+
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+
+            try {
+                Discipline dbDiscipline = entityManager.find(Discipline.class, discipline.getName());
+                if (dbDiscipline == null) {
+                    entityManager.persist(discipline);
+                }
+            } catch (IllegalArgumentException e) {
+                entityManager.persist(discipline);
+            }
+
+            transaction.commit();
+        } catch (EntityExistsException | RollbackException ex) {
+            //fixme read more about RollbackException
+            throw new UserAlreadyExistsException();
+        } catch (Exception ex) {
+            System.out.println(ex.getClass().toString());
+            ex.printStackTrace();
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            entityManager.close();
+        }
+
+        return discipline;
     }
 
 }

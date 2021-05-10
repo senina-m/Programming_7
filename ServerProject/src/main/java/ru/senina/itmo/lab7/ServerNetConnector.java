@@ -23,9 +23,9 @@ public class ServerNetConnector {
         try {
             serverSocket = new ServerSocket(port);
             clientSocket = serverSocket.accept();
-            Logging.log(Level.INFO, "Connection was accepted.");
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            Logging.log(Level.INFO, "Connection was accepted.");
             return true;
         } catch (IOException e){
             //TODO: обработать ошибки UnknownHostException отдельно?
@@ -35,7 +35,7 @@ public class ServerNetConnector {
         }
     }
 
-    public String nextCommand(int attempts) throws TimeoutException{
+    public String receiveMessage(int attempts) throws TimeoutException{
         String line = null;
         try {
             while(line == null) {
@@ -55,9 +55,6 @@ public class ServerNetConnector {
 
     public void sendResponse(String str){
         byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
-//        4 bytes because int is 4 bytes
-//        out.println((bytes.length + 4) + str);
-//        out.println(new String(bytes));
         out.println(str);
         Logging.log(Level.INFO, "Message '" + str + "' was send. Length " + bytes.length);
     }

@@ -1,6 +1,7 @@
 package ru.senina.itmo.lab7.labwork;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,9 +26,7 @@ public class LabWork  implements Serializable {
     @Id @Getter
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generator_labwork")
     @SequenceGenerator(name = "generator_labwork", sequenceName = "seq_labwork", allocationSize = 1)
-    private final Long id = Math.abs((long) Objects.hash(creationDate)); //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным,
-    // Значение этого поля должно генерироваться автоматически
-
+    private Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным,
 
     @Getter @Setter
     @Column(name="name", nullable = false)
@@ -53,14 +52,17 @@ public class LabWork  implements Serializable {
 
     @Transient
     private Difficulty difficulty; //Поле может быть null
+
+    @JsonIgnore
     @Basic @Getter
     @Column(name = "difficultyIntValue", nullable = false)
     private int difficultyIntValue;
 
+    @ManyToOne()
     @Getter @Setter
-    @OneToOne
     private Discipline discipline; //Поле не может быть null
 
+    @JsonIgnore
     @ManyToOne()
     @Getter @Setter
     private Owner owner;

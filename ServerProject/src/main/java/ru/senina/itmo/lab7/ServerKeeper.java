@@ -21,8 +21,11 @@ public class ServerKeeper {
             SendingTask sendingTask = new SendingTask(net);
             ProcessingTask processingTask = new ProcessingTask(controller, sendingTask);
             ReadingTask readingTask = new ReadingTask(net, processThreads, processingTask);
-            while (!net.startConnection(serverPort)) {
-                net.startConnection(serverPort);
+            while (true) { //пока не появится готовый клиент  - проверяем
+                if(net.startConnection(serverPort)){
+                    break;
+                }
+                //fixme нужно ли тут усыплять поток на какое-то время, чтобы не грузить процессор?
             }
             readThreads.execute(readingTask);
             Logging.log(Level.INFO, "readThreads was executed for readingTask");

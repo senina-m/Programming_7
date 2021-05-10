@@ -7,10 +7,8 @@ import ru.senina.itmo.lab7.labwork.Discipline;
 import ru.senina.itmo.lab7.labwork.LabWork;
 import ru.senina.itmo.lab7.parser.Parser;
 
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLOutput;
 import java.util.*;
 
 
@@ -20,7 +18,8 @@ public class TerminalKeeper {
     private boolean script = false;
     private Map<String, String[]> commands;
     private final String filename;
-    private final boolean debug = ClientMain.DEBUG;
+    private final boolean debug = true;
+            //ClientMain.DEBUG;
 
 
     public TerminalKeeper(String filename) {
@@ -74,80 +73,84 @@ public class TerminalKeeper {
      * @return NULLABLE
      */
     private LabWork readElement() {
-        while (true) {
-            try {
-                LabWork element = new LabWork();
-                if (!script) {
-                    System.out.println("You run a command, which needs LabWork element to be entered.");
-                }
-
-                if (!script) {
-                    System.out.println("Enter element's name.");
-                }
-                element.setName(in.nextLine());
-
-                if (!script) {
-                    System.out.println("Enter coordinates. In first line x <= 74. In second y >= -47.");
-                }
-                element.setCoordinates(new Coordinates(Integer.parseInt(in.nextLine()), Long.parseLong(in.nextLine())));
-
-                if (!script) {
-                    System.out.println("Enter minimal point.");
-                }
-                element.setMinimalPoint(Float.parseFloat(in.nextLine()));
-
-                if (!script) {
-                    System.out.println("Enter element description.");
-                }
-                element.setDescription(in.nextLine());
-
-                if (!script) {
-                    System.out.println("Enter average point.");
-                }
-                element.setAveragePoint(Integer.parseInt(in.nextLine()));
-
-                if (!script) {
-                    System.out.println("Enter one difficulty of following list:");
-                }
-                Difficulty[] difficulties = Difficulty.values();
-                for (Difficulty difficulty : difficulties) {
-                    System.out.print(difficulty.toString() + "; ");
-                }
-
-                element.setDifficulty(in.nextLine());
-                if (!script) {
-                    System.out.println("Enter discipline parametrs:");
-                }
-                Discipline discipline = new Discipline();
-                if (!script) {
-                    System.out.println("Enter discipline name.");
-                }
-                discipline.setName(in.nextLine());
-                if (!script) {
-                    System.out.println("Enter discipline lectureHours.");
-                }
-                discipline.setLectureHours(Long.parseLong(in.nextLine()));
-                if (!script) {
-                    System.out.println("Enter discipline practiceHours.");
-                }
-                discipline.setPracticeHours(Integer.parseInt(in.nextLine()));
-                if (!script) {
-                    System.out.println("Enter discipline selfStudyHours.");
-                }
-                discipline.setSelfStudyHours(Integer.parseInt(in.nextLine()));
-                element.setDiscipline(discipline);
-                return element;
-            } catch (InvalidArgumentsException | NumberFormatException e) {
-                if (!script) {
-                    System.out.println("You have entered invalidate value." + e.getMessage() + "\nDo you want to exit from command? (yes/no)");
-                    if (in.nextLine().equals("yes")) {
-                        return null;
-                    } else {
-                        System.out.println("Try again.");
+        if (debug) {
+            return new LabWork("new lab", new Coordinates(60, 0), 2, "description", 1, Difficulty.NORMAL, new Discipline("Proga", 16, 32, 1000));
+        } else {
+            while (true) {
+                try {
+                    LabWork element = new LabWork();
+                    if (!script) {
+                        System.out.println("You run a command, which needs LabWork element to be entered.");
                     }
-                } else {
-                    System.out.println("Script had incorrect command with element argument.");
-                    return null;
+
+                    if (!script) {
+                        System.out.println("Enter element's name.");
+                    }
+                    element.setName(in.nextLine());
+
+                    if (!script) {
+                        System.out.println("Enter coordinates. In first line x <= 74. In second y >= -47.");
+                    }
+                    element.setCoordinates(new Coordinates(Integer.parseInt(in.nextLine()), Long.parseLong(in.nextLine())));
+
+                    if (!script) {
+                        System.out.println("Enter minimal point.");
+                    }
+                    element.setMinimalPoint(Float.parseFloat(in.nextLine()));
+
+                    if (!script) {
+                        System.out.println("Enter element description.");
+                    }
+                    element.setDescription(in.nextLine());
+
+                    if (!script) {
+                        System.out.println("Enter average point.");
+                    }
+                    element.setAveragePoint(Integer.parseInt(in.nextLine()));
+
+                    if (!script) {
+                        System.out.println("Enter one difficulty of following list:");
+                    }
+                    Difficulty[] difficulties = Difficulty.values();
+                    for (Difficulty difficulty : difficulties) {
+                        System.out.print(difficulty.toString() + "; ");
+                    }
+
+                    element.setDifficulty(in.nextLine());
+                    if (!script) {
+                        System.out.println("Enter discipline parametrs:");
+                    }
+                    Discipline discipline = new Discipline();
+                    if (!script) {
+                        System.out.println("Enter discipline name.");
+                    }
+                    discipline.setName(in.nextLine());
+                    if (!script) {
+                        System.out.println("Enter discipline lectureHours.");
+                    }
+                    discipline.setLectureHours(Long.parseLong(in.nextLine()));
+                    if (!script) {
+                        System.out.println("Enter discipline practiceHours.");
+                    }
+                    discipline.setPracticeHours(Integer.parseInt(in.nextLine()));
+                    if (!script) {
+                        System.out.println("Enter discipline selfStudyHours.");
+                    }
+                    discipline.setSelfStudyHours(Integer.parseInt(in.nextLine()));
+                    element.setDiscipline(discipline);
+                    return element;
+                } catch (InvalidArgumentsException | NumberFormatException e) {
+                    if (!script) {
+                        System.out.println("You have entered invalidate value." + e.getMessage() + "\nDo you want to exit from command? (yes/no)");
+                        if (in.nextLine().equals("yes")) {
+                            return null;
+                        } else {
+                            System.out.println("Try again.");
+                        }
+                    } else {
+                        System.out.println("Script had incorrect command with element argument.");
+                        return null;
+                    }
                 }
             }
         }
@@ -170,10 +173,10 @@ public class TerminalKeeper {
     }
 
     public void printResponse(CommandResponse response) {
-        if(response.getCommandName().equals("exit")){
+        if (response.getCommandName().equals("exit")) {
             Parser.writeStringToFile(filename, response.getResponse());
             System.out.println("Collection was saved to file. Program will exit!");
-        }else {
+        } else {
             System.out.println(response.getResponse());
         }
     }
@@ -183,13 +186,14 @@ public class TerminalKeeper {
     }
 
     public CommandArgs authorizeUser() {
-        if(debug){//fixme: remove debug
+        if (debug) {//fixme: remove debug
             CommandArgs testCommandRegistration = new CommandArgs();
-            testCommandRegistration.setArgs(new String[]{"register","masha", encrypt("senina")});
-            testCommandRegistration.setCommandName("register");
+            testCommandRegistration.setArgs(new String[]{"authorize", "nan", encrypt("nan")});
+            testCommandRegistration.setCommandName("authorize");
+//            testCommandRegistration.setCommandName("register");
             return testCommandRegistration;
-        }else {
-            System.out.println("Do you have an account or you to register? Type \"sign in\" or \"log in\".\n >");
+        } else {
+            System.out.print("Do you have an account or you to register? Type \"sign in\" or \"log in\".\n >");
             while (true) {
                 switch (in.nextLine().trim()) {
                     case ("sign in"):
@@ -197,57 +201,63 @@ public class TerminalKeeper {
                     case ("log in"):
                         return lonIn();
                     default:
-                        System.out.println("Incorrect input! Try to type again \"sign in\" or \"log in\".");
+                        System.out.print("Incorrect input! Try to type again \"sign in\" or \"log in\".\n >");
                 }
             }
         }
     }
 
-    //Todo: хешировать пароли!!!
-
-    /** I have to put login first and then password */
-    public CommandArgs signIn(){
+    /**
+     * I have to put login first and then password
+     */
+    public CommandArgs signIn() {
         //todo: read password twice
         CommandArgs signInCommand = new CommandArgs();
         signInCommand.setCommandName("register");
         signInCommand.setLogin(getLogin());
-        signInCommand.setArgs(new String[]{signInCommand.getCommandName(),signInCommand.getLogin(), encrypt(getPassword())});
+        signInCommand.setArgs(new String[]{signInCommand.getCommandName(), signInCommand.getLogin(), encrypt(getPassword())});
         return signInCommand;
 //        while(!password.equals(new String(console.readPassword("Please repeat your password: ")))){
 //            System.out.println("Your passwords aren't identical. Try again!");
 //        }
     }
 
-    /** I have to put login first and then password */
-    public CommandArgs lonIn(){
+    public CommandArgs lonIn() {
         CommandArgs logInCommand = new CommandArgs();
         logInCommand.setCommandName("authorize");
         logInCommand.setLogin(getLogin());
-        logInCommand.setArgs(new String[]{logInCommand.getCommandName(),logInCommand.getLogin(), encrypt(getPassword())});
+        logInCommand.setArgs(new String[]{logInCommand.getCommandName(), logInCommand.getLogin(), encrypt(getPassword())});
         return logInCommand;
     }
 
-    private String getLogin(){
+    private String getLogin() {
         System.out.print("Please enter your login: ");
         String login = in.nextLine().trim();
-        while (login.equals("")){
+        while (login.equals("")) {
             System.out.println("You entered empty login! Try again");
             login = in.nextLine().trim();
         }
         return login;
     }
 
-    private String getPassword(){
-            // не работает Console при запуске в ide (в терминале должно работать, но я не проверяла)
-            Console console = System.console();
-            String password = new String(console.readPassword("Please enter your password: ")).trim();
-            while (password.equals("")) {
-                password = new String(console.readPassword("You entered empty password! Please try again: ")).trim();
-            }
-            return password;
+    private String getPassword() {
+        //fixme не работает Console при запуске в ide (в терминале должно работать, но я не проверяла)
+//            Console console = System.console();
+//            String password = new String(console.readPassword("Please enter your password: ")).trim();
+//            while (password.equals("")) {
+//                password = new String(console.readPassword("You entered empty password! Please try again: ")).trim();
+//            }
+//            return password;
+        System.out.print("Please enter your password: ");
+        String password = new String(in.nextLine()).trim();
+        while (password.equals("")) {
+            System.out.print("You entered empty password! Please try again: ");
+            password = new String(in.nextLine()).trim();
+        }
+        return password;
     }
 
-    private String encrypt(String password){
+    private String encrypt(String password) {
         String solt = "klj;kjgsdkj";
         return DigestUtils.md5Hex(solt + password);
     }

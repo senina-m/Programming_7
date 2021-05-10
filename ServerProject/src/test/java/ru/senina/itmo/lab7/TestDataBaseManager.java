@@ -35,12 +35,12 @@ public class TestDataBaseManager {
     @Test
     public void basicOperationsToDB() {
         // Create two Students
-        create(1, "Alice", 22, new StudentCoordinates(2,4));
-        create(2, "Bob", 20,  new StudentCoordinates(5,4));
-        create(3, "Charlie", 25, new StudentCoordinates(93,10));
+        create(new Student(1, "Alice", 22, new StudentCoordinates(2,4)));
+        create(new Student(2, "Bob", 20,  new StudentCoordinates(5,4)));
+        create(new Student(3, "Charlie", 25, new StudentCoordinates(93,10)));
 
         // Update the age of Bob using the id
-        update(2, "Bob", 25,  new StudentCoordinates(100,100));
+        update(new Student(2, "Bob", 25,  new StudentCoordinates(100,100)));
 
         // Delete the Alice from database
         delete(1);
@@ -53,12 +53,15 @@ public class TestDataBaseManager {
             }
         }
 
+        delete(2);
+        delete(3);
+
         // NEVER FORGET TO CLOSE THE ENTITY_MANAGER_FACTORY
         assert entityManagerFactory != null;
         entityManagerFactory.close();
     }
 
-    public void create(int id, String name, int age, StudentCoordinates address) {
+    public void create(Student student) {
         // Create an EntityManager
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
@@ -70,20 +73,12 @@ public class TestDataBaseManager {
             // Begin the transaction
             transaction.begin();
 
-            // Create a new Student object
-            Student stu = new Student();
-            stu.setId(id);
-            stu.setName(name);
-            stu.setAge(age);
-            stu.setAddress(address);
-
             // Save the student object
-            manager.persist(stu);
+            manager.persist(student);
 
             // Commit the transaction
             transaction.commit();
         } catch (Exception ex) {
-            // If there are any exceptions, roll back the changes
             if (transaction != null) {
                 transaction.rollback();
             }
@@ -162,40 +157,30 @@ public class TestDataBaseManager {
         }
     }
 
-    public void update(int id, String name, int age, StudentCoordinates address) {
-        // Create an EntityManager
+    public void update(Student student) {
         assert entityManagerFactory != null;
         EntityManager manager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
 
         try {
-            // Get a transaction
             transaction = manager.getTransaction();
-            // Begin the transaction
             transaction.begin();
 
-            // Get the Student object
-            Student stu = manager.find(Student.class, id);
+            Student stu = manager.find(Student.class, student.getId());
 
-            // Change the values
-            stu.setName(name);
-            stu.setAge(age);
-            stu.setAddress(address);
+            stu.setName(student.getName());
+            stu.setAge(student.getAge());
+            stu.setAddress(student.getAddress());
 
-            // Update the student
             manager.persist(stu);
 
-            // Commit the transaction
             transaction.commit();
         } catch (Exception ex) {
-            // If there are any exceptions, roll back the changes
             if (transaction != null) {
                 transaction.rollback();
             }
-            // Print the Exception
             ex.printStackTrace();
         } finally {
-            // Close the EntityManager
             manager.close();
         }
     }

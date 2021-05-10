@@ -7,12 +7,12 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "testUser") @Getter @Setter
+@Table(name = "testuser") @Getter @Setter
 public class TestUser implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @Id @Getter
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generator_testuser")
+    @SequenceGenerator(name = "generator_testuser", sequenceName = "seq_testuser", allocationSize = 1)
     private Long id;
 
     @OneToOne(mappedBy = "testUser", cascade = CascadeType.ALL)

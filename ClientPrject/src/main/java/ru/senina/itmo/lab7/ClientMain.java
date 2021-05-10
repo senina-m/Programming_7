@@ -8,7 +8,7 @@ import java.util.Optional;
  * Main class of programm to start app.
  */
 public class ClientMain {
-    public final static boolean DEBUG = true;
+    public final static boolean DEBUG = false;
 
     public static void main(String[] args) {
 

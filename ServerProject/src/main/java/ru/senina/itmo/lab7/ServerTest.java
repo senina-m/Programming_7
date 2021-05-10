@@ -8,7 +8,7 @@ public class ServerTest {
         ServerNetConnector net = new ServerNetConnector();
         net.startConnection(8181);
         try {
-            net.nextCommand(2000);
+            net.receiveMessage(2000);
         }catch (TimeoutException e){
             net.stopConnection();
             net.startConnection(8181);

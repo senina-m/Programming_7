@@ -14,19 +14,19 @@ public class Model {
     private static final CollectionKeeper collectionKeeper = new CollectionKeeper();
 
     public CommandResponse run(CommandArgs commandArgs) {
-            Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " was read.");
-            Command command = commandMap.get(commandArgs.getCommandName());
-            command.setArgs(commandArgs);
-            if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
-                CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
-                if (annotation.collectionKeeper()) {
-                    command.setCollectionKeeper(collectionKeeper);
-                }
-                if (annotation.parser()) {
-                    command.setParser(COLLECTION_PARSER);
-                }
+        Command command = commandMap.get(commandArgs.getCommandName());
+        command.setArgs(commandArgs);
+        if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
+            CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
+            if (annotation.collectionKeeper()) {
+                command.setCollectionKeeper(collectionKeeper);
             }
-            return command.run();
+            if (annotation.parser()) {
+                command.setParser(COLLECTION_PARSER);
+            }
+        }
+        Logging.log(Level.INFO, commandArgs.getCommandName() + " command's arguments was copied.");
+        return command.run();
     }
 
     private static Map<String, Command> createCommandMap() {

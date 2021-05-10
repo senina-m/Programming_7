@@ -4,6 +4,7 @@ package ru.senina.itmo.lab7;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -17,7 +18,7 @@ public class ClientNetConnector {
     private Selector selector;
     private final boolean debug = ClientMain.DEBUG;
 
-    public boolean startConnection(String host, int serverPort) throws RefusedConnectionException {
+    public void startConnection(String host, int serverPort) throws RefusedConnectionException{
         try {
             selector = Selector.open();
             if (debug) {
@@ -43,7 +44,7 @@ public class ClientNetConnector {
                             if (debug) {
                                 System.out.println("DEBUG: Finished to connect! Client is connected to server!");
                             }
-                            return true;
+                            return;
                         }
                         break;
                     }
@@ -51,21 +52,21 @@ public class ClientNetConnector {
             }
         } catch (ConnectException e) {
             if (debug) {
-                System.out.println("WARNING: Server is not available! " + e);
-                return false;
-            }else {
-                throw new RefusedConnectionException();
+                System.out.println("DEBUG: (Connect)EXCEPTION Server is not available! " + e);
             }
-        } catch (IOException e){
+            throw new RefusedConnectionException("Server is not available! " + e);
+
+
+        } catch (IOException e) {
             if (debug) {
-                System.out.println("WARNING: Exception in connecting! " + e);
+                System.out.println("DEBUG: (IO)EXCEPTION in connecting! " + e);
             }
-            return false;
+            throw new RefusedConnectionException("IOException while connecting. " + e);
         }
     }
 
 
-    public void sendMessage(String msg) {
+    public void sendMessage(String msg) throws RefusedConnectionException{
         if (debug) {
             System.out.println("DEBUG: Sending of a message started!");
         }
@@ -93,6 +94,8 @@ public class ClientNetConnector {
                     }
                 }
             }
+        } catch (SocketException e){
+            throw new RefusedConnectionException("Server has disconnected! " + e);
         } catch (IOException e) {
             if (debug) {
                 System.out.println("DEBUG: Exception in sending a message " + e.getLocalizedMessage());
@@ -103,25 +106,26 @@ public class ClientNetConnector {
     /**
      * @return NULLABLE if there was no answer
      */
-    public String receiveMessage() {
+    public String receiveMessage() throws RefusedConnectionException{
+
         if (debug) {
             System.out.println("DEBUG: Reading started!");
         }
         try {
             //TODO: sleep for while-true
             while (true) {
-                if (debug) {
-                    System.out.println("DEBUG: select");
-                }
+//                if (debug) {
+//                    System.out.println("DEBUG: select");
+//                }
                 selector.select();
                 ByteBuffer buffer = ByteBuffer.allocate(1024);
                 Set<SelectionKey> selectedKeys = selector.selectedKeys();
                 Iterator<SelectionKey> iterator = selectedKeys.iterator();
                 while (iterator.hasNext()) {
                     SelectionKey selectionKey = iterator.next();
-                    if (debug) {
-                        System.out.println("DEBUG: Key: " + selectionKey.readyOps());
-                    }
+//                    if (debug) {
+//                        System.out.println("DEBUG: Key: " + selectionKey.readyOps());
+//                    }
                     if (selectionKey.isReadable()) {
                         if (debug) {
                             System.out.println("DEBUG: Reading there was a key to read!");
@@ -129,9 +133,15 @@ public class ClientNetConnector {
                         SocketChannel channel = (SocketChannel) selectionKey.channel();
 
                         List<Byte> list = new LinkedList<>();
-                        while (channel.read(buffer) >=0 || buffer.position() > 0){
+                        while (channel.read(buffer) != -1 || buffer.position() > 0) {
                             buffer.flip();
-                            list.add(buffer.get());
+//                            if(debug){
+//                                System.out.println("DEBUG: Buffer contents" + new String(buffer.array(), 0, buffer.position(), StandardCharsets.UTF_8));
+//                                System.out.println("DEBUG: Buffer position: " + buffer.position() + "    Buffer limit: " + buffer.limit());
+//                            }
+                            if(buffer.remaining() > 0) {
+                                list.add(buffer.get());
+                            }
                             buffer.compact();
                         }
                         String message = byteListToString(list).trim();
@@ -144,14 +154,16 @@ public class ClientNetConnector {
                     iterator.remove();
                 }
             }
-        } catch (IOException /*| InterruptedException*/ e) {
+        } catch (SocketException e){
+            throw new RefusedConnectionException("Server has disconnected" + e);
+        } catch (IOException e) {
             if (debug) {
-                System.out.println("DEBUG: Exception in receiving message " + e.getLocalizedMessage());
+                System.out.println("DEBUG: EXCEPTION in receiving message " + e.toString());
             }
-            return null;
-        } catch (NumberFormatException e){
+            throw new RuntimeException(e); //todo: check what such syntax do
+        } catch (NumberFormatException e) {
             if (debug) {
-                System.out.println("DEBUG: Exception in received message number of bytes in message was incorrect!");
+                System.out.println("DEBUG: EXCEPTION in received message number of bytes in message was incorrect!");
             }
             throw new InvalidArgumentsException("Number of bytes in received message was incorrect");
         }
@@ -180,7 +192,7 @@ public class ClientNetConnector {
             array[i] = current;
             i++;
         }
-//        return new String(array, StandardCharsets.UTF_8);
-        return new String(array);
+        return new String(array, StandardCharsets.UTF_8);
+//        return new String(array);
     }
 }

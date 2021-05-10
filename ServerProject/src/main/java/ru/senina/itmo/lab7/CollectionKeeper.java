@@ -22,21 +22,14 @@ public class CollectionKeeper {
 
 //--------------------------METHODS----------------------------------------------------------------------
 
-
-    public void setList(List<LabWork> list, String login) throws IllegalArgumentException {
-        for (LabWork element : list) {
-            DBManager.addElement(element, login);
-        }
-    }
-
     public List<LabWork> getList() {
         return DBManager.readAll();
     }
 
 
     @JsonIgnore
-    public int getAmountOfElements() {
-        return Optional.of(DBManager.countNumOfElements()).orElse(0);
+    public long getAmountOfElements() {
+        return Optional.of(DBManager.countNumOfElements()).orElse((long) 0);
     }
 
     public String getTime() {
@@ -58,6 +51,8 @@ public class CollectionKeeper {
         try {
             DBManager.addElement(element, token);
             return "Element with id: " + element.getId() + " was successfully added.";
+        } catch (DBProcessException e) {
+            return "Element wasn't added to collection due to problems with data base!";
         } catch (Exception e) {
             Logging.log(Level.WARNING, "Something wrong with adding element to collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
@@ -69,7 +64,7 @@ public class CollectionKeeper {
         try {
             DBManager.removeById(id, token);
             return "Element with id: " + id + " was successfully removed.";
-        }catch (Exception e){
+        } catch (Exception e) {
             return "There is no element with id: " + id + " in collection.";
             //todo: possess different exceptions
         }
@@ -79,7 +74,7 @@ public class CollectionKeeper {
         try {
             DBManager.clear(token);
             return "The collection was successfully cleared.";
-        }catch (Exception e){
+        } catch (Exception e) {
             Logging.log(Level.WARNING, "Something wrong with clearing of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
             throw new RuntimeException("Something wrong with clearing of collection. (Warning from collectionKeeper) " + e.getMessage());
@@ -100,7 +95,7 @@ public class CollectionKeeper {
         try {
             DBManager.removeGreater(element, token);
             return "All elements greater then entered were successfully removed.";
-        }catch (Exception e){
+        } catch (Exception e) {
             Logging.log(Level.WARNING, "Something wrong with removing_greater elements of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
             throw new RuntimeException("Something wrong with removing_greater elements of collection. (Warning from collectionKeeper) " + e.getMessage());
@@ -119,9 +114,9 @@ public class CollectionKeeper {
     }
 
     public List<LabWork> filterByDescription(String description) {
-        try{
+        try {
             return DBManager.filterByDescription(description);
-        }catch (Exception e){
+        } catch (Exception e) {
             Logging.log(Level.WARNING, "Something wrong with filterByDescription of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
             throw new RuntimeException("Something wrong with filterByDescription of collection. (Warning from collectionKeeper) " + e.getMessage());
@@ -133,7 +128,7 @@ public class CollectionKeeper {
     public List<LabWork> getSortedList() {
         try {
             return DBManager.getSortedList();
-        }catch (Exception e){
+        } catch (Exception e) {
             Logging.log(Level.WARNING, "Something wrong with getSortedList of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
             throw new RuntimeException("Something wrong with getSortedList of collection. (Warning from collectionKeeper) " + e.getMessage());

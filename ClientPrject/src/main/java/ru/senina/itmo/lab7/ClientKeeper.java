@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class to deal with input and output and keep CollectionKeeper class instance.
@@ -18,23 +19,23 @@ public class ClientKeeper {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ClientNetConnector netConnector = new ClientNetConnector();
     private TerminalKeeper terminalKeeper;
-    private int numberOfCommands = 0;
     private int recursionLevel = 0;
     private boolean working = true;
+    private String host = "localhost";
+    private int serverPort = 2;
+    private int attemptsToConnect = 2;
+    private int delayToConnect = 2;
     private final boolean debug = ClientMain.DEBUG;
     private final JsonParser<CommandResponse> responseParser = new JsonParser<>(objectMapper, CommandResponse.class);
     private final JsonParser<CommandArgs> commandArgsJsonParser = new JsonParser<>(objectMapper, CommandArgs.class);
-    /**
-     * @param filename the path to file from which we read and to which we write collection data
-     */
+
+
     public ClientKeeper(String filename) {
         this.filename = filename;
     }
 
-    /**
-     * Method to start a new collection and System.in reader
-     */
     public void start(int serverPort) {
+        this.serverPort = serverPort;
         try {
             File f = new File(filename);
             if (f.isDirectory() || !Files.isReadable(f.toPath())) {
@@ -48,14 +49,6 @@ public class ClientKeeper {
         }
 
         terminalKeeper = new TerminalKeeper(filename);
-        try {
-            netConnector.startConnection("localhost", serverPort);
-        }catch (RefusedConnectionException e){
-            throw new RuntimeException(" Server is not available! java.net.ConnectException");
-            //todo: catch exception and try again
-        }
-
-
         //todo: проверить, что ответ пришёл именно на нужную команду
         //todo: проверять, что ответ пришёл валидным
         authorize();
@@ -65,15 +58,20 @@ public class ClientKeeper {
             try {
                 CommandArgs command = terminalKeeper.readNextCommand();
                 newCommand(command);
-            }catch (InvalidServerAnswer e){
-                terminalKeeper.printResponse(new CommandResponse(Status.NETWORK_EXCEPTION, "Exception in server answer", "Sorry, server failed to process your command. Please, try to run it again."));
+            } catch (InvalidServerAnswer e) {
+                terminalKeeper.printResponse(new CommandResponse(Status.NETWORK_EXCEPTION, "processing server answer",
+                        "Sorry, server failed to process your command. Please, try to run it again."));
+            } catch (RefusedConnectionException e){
+                terminalKeeper.printResponse(new CommandResponse(Status.NETWORK_EXCEPTION, "disconnect from server",
+                        "Sorry, server have disconnected. Try your command again, please!"));
+
             }
         }
         netConnector.stopConnection();
         System.exit(0);
     }
 
-    private void newCommand(CommandArgs command) throws InvalidServerAnswer{
+    private void newCommand(CommandArgs command) throws InvalidServerAnswer, RefusedConnectionException {
         switch (command.getCommandName()) {
             case ("execute_script"):
                 if (recursionLevel < 10) {
@@ -83,7 +81,7 @@ public class ClientKeeper {
                         for (CommandArgs c : scriptCommands) {
                             newCommand(c);
                         }
-                    }catch (FileAccessException e){
+                    } catch (FileAccessException e) {
                         terminalKeeper.printResponse(new CommandResponse(Status.ACCESS_EXCEPTION, command.getCommandName(), e.getMessage()));
                     }
                 } else {
@@ -98,34 +96,61 @@ public class ClientKeeper {
             default:
                 command.setToken(token);
                 String message = commandArgsJsonParser.fromObjectToString(command);
+                tryToConnect(host, this.serverPort, attemptsToConnect, delayToConnect);
                 netConnector.sendMessage(message);
                 String response = Optional.ofNullable(netConnector.receiveMessage()).orElseThrow(InvalidServerAnswer::new);
+                netConnector.stopConnection();
                 CommandResponse commandAnswer = responseParser.fromStringToObject(response);
                 terminalKeeper.printResponse(commandAnswer);
         }
     }
 
-    private void authorize(){
+    private void authorize() {
         CommandArgs authorizationCommand = terminalKeeper.authorizeUser();
+        tryToConnect(host, serverPort, attemptsToConnect, delayToConnect);
         netConnector.sendMessage(commandArgsJsonParser.fromObjectToString(authorizationCommand));
         CommandResponse authResponse = responseParser.fromStringToObject(netConnector.receiveMessage());
-        if(!authResponse.getCode().equals(Status.REGISTRATION_FAIL)){ //Code 5 - exception such user already exist
+        netConnector.stopConnection();
+        if (authResponse.getCode().equals(Status.REGISTRATION_FAIL)) { //Code 5 - exception such user already exist
             terminalKeeper.printResponse(new CommandResponse(authResponse.getCode(), authResponse.getCommandName(),
                     "User with such login already exist! Try to register again!"));
             authorize();
-        }else {
+        } else {
             token = authResponse.getResponse();
         }
     }
 
-    private Map<String, String[]> getCommandsMap(){
+    private Map<String, String[]> getCommandsMap() {
         CommandArgs requestCommandsMapCommand = new CommandArgs("request_map_of_commands", new String[]{});
         requestCommandsMapCommand.setToken(token);
+        tryToConnect(host, serverPort, attemptsToConnect, delayToConnect);
         netConnector.sendMessage(commandArgsJsonParser.fromObjectToString(requestCommandsMapCommand));
         CommandResponse requestCommandsMapResponse = responseParser.fromStringToObject(netConnector.receiveMessage());
+        netConnector.stopConnection();
         String mapOfCommandsString = requestCommandsMapResponse.getResponse();
         SetOfCommands setOfCommands = new JsonParser<>(objectMapper, SetOfCommands.class).fromStringToObject(mapOfCommandsString);
         return setOfCommands.getCommandsWithArgs();
+    }
+
+    public void tryToConnect(String host, int serverPort, int attempts, int delay) {
+        for (int i = 0; i < attempts; i++) {
+            try {
+                netConnector.startConnection(host, serverPort);
+                return;
+            } catch (RefusedConnectionException e) {
+                terminalKeeper.printResponse(new CommandResponse(Status.NETWORK_EXCEPTION, "connect to server", "Sorry, now server is not available! We will try to reconnect in " + delay + " seconds!"));
+                try {
+                    TimeUnit.SECONDS.sleep(delay);
+                }catch (InterruptedException ex) {
+                    if(debug){
+                        System.out.println("DEBUG: EXCEPTION in tryToConnect " + ex.toString());
+                    }
+                }
+            }
+        }
+        terminalKeeper.printResponse(new CommandResponse(Status.NETWORK_EXCEPTION, "connect to server", "Can't connect to server! Try again later!"));
+        netConnector.stopConnection();
+        System.exit(0); //todo: check if it's OK
     }
 }
 

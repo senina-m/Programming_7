@@ -9,8 +9,6 @@ public class CommandResponse {
     private  Status code;
     private  String response;
     private  String commandName;
-    private  int exceptionCode = 0;
-
 
     public CommandResponse() {
     }

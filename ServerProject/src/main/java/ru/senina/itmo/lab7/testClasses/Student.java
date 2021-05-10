@@ -22,6 +22,17 @@ public class Student implements Serializable {
     @Column(name = "student_address", nullable = false)
     private StudentCoordinates address;
 
+    public Student(int id, String name, int age, StudentCoordinates address) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.address = address;
+    }
+
+    public Student() {
+
+    }
+
     @Override
     public String toString() {
         return id + "\t" + name + "\t" + age + "\t" + address;

@@ -1,31 +1,38 @@
 package ru.senina.itmo.lab7.labwork;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import ru.senina.itmo.lab7.InvalidArgumentsException;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * The class-field in LabWork class
  */
-@Entity
+@Entity @Getter @Setter
 public class Discipline implements Serializable {
+
     @Id
     @Column(name = "discipline_name", nullable = false)
     private String name; //Поле не может быть null, Строка не может быть пустой
+
     @Column(name = "discipline_lectureHours", nullable = false)
     private long lectureHours;
+
     @Column(name = "discipline_practiceHours", nullable = false)
     private Integer practiceHours; //Поле может быть null
+
     @Column(name = "discipline_selfStudyHours", nullable = false)
     private int selfStudyHours;
 
-//    @OneToOne
-//    @MapsId
-//    @JoinColumn(name = "discipline_name")
-    @Column(name = "labwork")
-    private LabWork labWork;
+    @JsonIgnore
+    @OneToMany(mappedBy = "discipline", cascade = CascadeType.MERGE)
+    private List<LabWork> labWork = new LinkedList<>();
 
     public Discipline() {
     }
@@ -35,6 +42,18 @@ public class Discipline implements Serializable {
         this.lectureHours = lectureHours;
         this.practiceHours = practiceHours;
         this.selfStudyHours = selfStudyHours;
+    }
+
+    public void addLabWork(LabWork labWork){
+        this.labWork.add(labWork);
+    }
+
+    public void setName(String name) throws InvalidArgumentsException {
+        if (name != null && name.length() != 0) {
+            this.name = name;
+        } else {
+            throw new InvalidArgumentsException("Discipline's name can't be null or empty line.");
+        }
     }
 
     @Override
@@ -50,39 +69,4 @@ public class Discipline implements Serializable {
         return Objects.hash(name, lectureHours, practiceHours, selfStudyHours);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) throws InvalidArgumentsException {
-        if (name != null && name.length() != 0) {
-            this.name = name;
-        } else {
-            throw new InvalidArgumentsException("Discipline's name can't be null or empty line.");
-        }
-    }
-
-    public long getLectureHours() {
-        return lectureHours;
-    }
-
-    public void setLectureHours(long lectureHours) {
-        this.lectureHours = lectureHours;
-    }
-
-    public Integer getPracticeHours() {
-        return practiceHours;
-    }
-
-    public void setPracticeHours(Integer practiceHours) {
-        this.practiceHours = practiceHours;
-    }
-
-    public int getSelfStudyHours() {
-        return selfStudyHours;
-    }
-
-    public void setSelfStudyHours(int selfStudyHours) {
-        this.selfStudyHours = selfStudyHours;
-    }
 }
