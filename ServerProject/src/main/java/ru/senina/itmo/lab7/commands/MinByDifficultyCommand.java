@@ -32,7 +32,7 @@ public class MinByDifficultyCommand extends CommandWithoutArgs {
         try {
             return new CommandResponse(Status.OK, getName(), "The less difficult subject is: \n" + parser.fromElementToString(collectionKeeper.minByDifficulty()));
         } catch (IndexOutOfBoundsException e){
-            return new CommandResponse(Status.PROBLEM_PROCESSED, getName(), "Can't do min_by_difficulty command. " + e.getMessage());
+            return new CommandResponse(Status.PROBLEM_PROCESSED, getName(), "Collection is empty! Can't find minimal element." + e.getMessage());
         } catch ( ParsingException e){
             return new CommandResponse(Status.PARSER_EXCEPTION, getName(), "Minimal element with such description was incorrect.");
         }

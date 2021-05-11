@@ -34,8 +34,6 @@ public class Model {
         //TODO: decide what to do with filename variable
         String filename = "my_file.json";
         Map<String, Command> commandMap = new HashMap<>();
-        commandMap.put("authorize", new AuthorizeCommand());
-        commandMap.put("help", new HelpCommand(commandMap));
         commandMap.put("info", new InfoCommand());
         commandMap.put("show", new ShowCommand());
         commandMap.put("add", new AddCommand());
@@ -51,10 +49,12 @@ public class Model {
         commandMap.put("print_descending", new PrintDescendingCommand());
         commandMap.put("execute_script", new ExecuteScriptCommand());
         commandMap.put("exit", new ExitCommand());
-        commandMap.put("request_map_of_commands", new RequestCommandsMapCommand(commandMap));
+        commandMap.put("help", new HelpCommand(commandMap));
+
+        commandMap.put("authorize", new AuthorizeCommand());
         commandMap.put("register", new RegisterCommand());
+        commandMap.put("request_map_of_commands", new RequestCommandsMapCommand(commandMap));
         return commandMap;
     }
-
 }
 

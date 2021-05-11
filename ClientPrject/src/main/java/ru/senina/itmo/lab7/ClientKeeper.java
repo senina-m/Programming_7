@@ -2,6 +2,7 @@ package ru.senina.itmo.lab7;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.senina.itmo.lab7.parser.JsonParser;
+import ru.senina.itmo.lab7.parser.Parser;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -61,7 +62,7 @@ public class ClientKeeper {
             } catch (InvalidServerAnswer e) {
                 terminalKeeper.printResponse(new CommandResponse(Status.NETWORK_EXCEPTION, "processing server answer",
                         "Sorry, server failed to process your command. Please, try to run it again."));
-            } catch (RefusedConnectionException e){
+            } catch (RefusedConnectionException e) {
                 terminalKeeper.printResponse(new CommandResponse(Status.NETWORK_EXCEPTION, "disconnect from server",
                         "Sorry, server have disconnected. Try your command again, please!"));
 
@@ -101,6 +102,10 @@ public class ClientKeeper {
                 String response = Optional.ofNullable(netConnector.receiveMessage()).orElseThrow(InvalidServerAnswer::new);
                 netConnector.stopConnection();
                 CommandResponse commandAnswer = responseParser.fromStringToObject(response);
+                if(commandAnswer.getCommandName().equals("save")){
+                    Parser.writeStringToFile(filename, commandAnswer.getResponse());
+                    commandAnswer.setResponse("Collection was successfully saved to file '" + filename + "!");
+                }
                 terminalKeeper.printResponse(commandAnswer);
         }
     }
@@ -111,11 +116,19 @@ public class ClientKeeper {
         netConnector.sendMessage(commandArgsJsonParser.fromObjectToString(authorizationCommand));
         CommandResponse authResponse = responseParser.fromStringToObject(netConnector.receiveMessage());
         netConnector.stopConnection();
-        if (authResponse.getCode().equals(Status.REGISTRATION_FAIL)) { //Code 5 - exception such user already exist
-            terminalKeeper.printResponse(new CommandResponse(authResponse.getCode(), authResponse.getCommandName(),
-                    "User with such login already exist! Try to register again!"));
-            authorize();
+        if (authResponse.getCode().equals(Status.REGISTRATION_FAIL)) {
+            if (authResponse.getCommandName().equals("register")) {//Code 5 - exception such user already exist
+                terminalKeeper.printResponse(new CommandResponse(authResponse.getCode(), authResponse.getCommandName(),
+                        "User with such login already exist! Try to register again!"));
+                authorize();
+            } else {
+                terminalKeeper.printResponse(new CommandResponse(authResponse.getCode(), authResponse.getCommandName(),
+                        "Your password or login isn't correct! Try to log in again!"));
+                authorize();
+            }
         } else {
+            terminalKeeper.printResponse(new CommandResponse(authResponse.getCode(), authResponse.getCommandName(),
+                    "You have successfully logged in! \nNow you can enter commands! (to see full command's list enter 'help')"));
             token = authResponse.getResponse();
         }
     }
@@ -141,8 +154,8 @@ public class ClientKeeper {
                 terminalKeeper.printResponse(new CommandResponse(Status.NETWORK_EXCEPTION, "connect to server", "Sorry, now server is not available! We will try to reconnect in " + delay + " seconds!"));
                 try {
                     TimeUnit.SECONDS.sleep(delay);
-                }catch (InterruptedException ex) {
-                    if(debug){
+                } catch (InterruptedException ex) {
+                    if (debug) {
                         System.out.println("DEBUG: EXCEPTION in tryToConnect " + ex.toString());
                     }
                 }

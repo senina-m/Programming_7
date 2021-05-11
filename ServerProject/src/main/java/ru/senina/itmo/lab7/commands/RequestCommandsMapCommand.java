@@ -37,10 +37,12 @@ public class RequestCommandsMapCommand extends CommandWithoutArgs{
             //todo: переписать на стримы, надо их уже наконец осваивать
             if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
                 CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
-                if (annotation.element()) {
-                    commandsArgsMap.put(annotation.name(), new String[]{"element"});
-                } else {
-                    commandsArgsMap.put(annotation.name(), new String[]{});
+                if(annotation.isVisibleInHelp()) {
+                    if (annotation.element()) {
+                        commandsArgsMap.put(annotation.name(), new String[]{"element"});
+                    } else {
+                        commandsArgsMap.put(annotation.name(), new String[]{});
+                    }
                 }
             }
         }

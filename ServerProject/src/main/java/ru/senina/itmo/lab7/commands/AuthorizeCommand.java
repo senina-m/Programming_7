@@ -5,7 +5,7 @@ import ru.senina.itmo.lab7.*;
 import java.util.Optional;
 
 //todo: дописать в аннатацию параметры для этой команды
-@CommandAnnotation(name = "authorize")
+@CommandAnnotation(name = "authorize", isVisibleInHelp = false)
 public class AuthorizeCommand extends Command{
     private String login;
     private String password;

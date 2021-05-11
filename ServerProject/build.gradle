@@ -37,6 +37,8 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.20'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 
+    implementation 'org.reflections:reflections:0.9.12'
+
     compile project(":LibraryProject")
 }
 

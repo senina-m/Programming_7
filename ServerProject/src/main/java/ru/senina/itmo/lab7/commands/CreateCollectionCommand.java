@@ -7,7 +7,7 @@ import ru.senina.itmo.lab7.parser.ParsingException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
-@CommandAnnotation(name = "create_collection", collectionKeeper = true, parser = true, filename = true)
+@CommandAnnotation(name = "create_collection", collectionKeeper = true, parser = true, filename = true, isVisibleInHelp = false)
 public class CreateCollectionCommand extends Command {
     private CollectionKeeper collectionKeeper;
     private CollectionParser parser;

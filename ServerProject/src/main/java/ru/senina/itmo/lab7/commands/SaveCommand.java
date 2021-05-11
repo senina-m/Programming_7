@@ -27,7 +27,7 @@ public class SaveCommand extends CommandWithoutArgs {
 
     @Override
     protected CommandResponse doRun() {
-        Parser.writeStringToFile(filename, parser.fromObjectToString(new LabWorkList(collectionKeeper.getList())));
-        return new CommandResponse(Status.OK, getName(), "Collection was successfully saved to " + filename + " file.");
+//        Parser.writeStringToFile(filename, );
+        return new CommandResponse(Status.OK, getName(), parser.fromObjectToString(new LabWorkList(collectionKeeper.getList())));
     }
 }

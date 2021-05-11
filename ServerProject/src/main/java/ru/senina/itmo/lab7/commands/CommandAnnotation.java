@@ -26,4 +26,6 @@ public @interface CommandAnnotation {
     boolean collectionKeeper() default false;
 
     boolean parser() default false;
+
+    boolean isVisibleInHelp() default true;
 }

@@ -7,6 +7,7 @@ import ru.senina.itmo.lab7.labwork.Discipline;
 import ru.senina.itmo.lab7.labwork.LabWork;
 import ru.senina.itmo.lab7.parser.Parser;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -18,8 +19,8 @@ public class TerminalKeeper {
     private boolean script = false;
     private Map<String, String[]> commands;
     private final String filename;
-    private final boolean debug = true;
-            //ClientMain.DEBUG;
+    private final boolean debug = false;
+    //ClientMain.DEBUG;
 
 
     public TerminalKeeper(String filename) {
@@ -242,19 +243,19 @@ public class TerminalKeeper {
 
     private String getPassword() {
         //fixme не работает Console при запуске в ide (в терминале должно работать, но я не проверяла)
-//            Console console = System.console();
-//            String password = new String(console.readPassword("Please enter your password: ")).trim();
-//            while (password.equals("")) {
-//                password = new String(console.readPassword("You entered empty password! Please try again: ")).trim();
-//            }
-//            return password;
-        System.out.print("Please enter your password: ");
-        String password = new String(in.nextLine()).trim();
+        Console console = System.console();
+        String password = new String(console.readPassword("Please enter your password: ")).trim();
         while (password.equals("")) {
-            System.out.print("You entered empty password! Please try again: ");
-            password = new String(in.nextLine()).trim();
+            password = new String(console.readPassword("You entered empty password! Please try again: ")).trim();
         }
         return password;
+//        System.out.print("Please enter your password: ");
+//        String password = new String(in.nextLine()).trim();
+//        while (password.equals("")) {
+//            System.out.print("You entered empty password! Please try again: ");
+//            password = new String(in.nextLine()).trim();
+//        }
+//        return password;
     }
 
     private String encrypt(String password) {

@@ -105,7 +105,9 @@ public class CollectionKeeper {
 
     public LabWork minByDifficulty() throws IndexOutOfBoundsException {
         try {
-            return DBManager.minByDifficulty();
+            return Optional.ofNullable(DBManager.minByDifficulty()).orElseThrow(IndexOutOfBoundsException::new);
+        } catch (IndexOutOfBoundsException e){
+            throw e; //fixme костыль с перекидыванием ошибки
         } catch (Exception e) {
             Logging.log(Level.WARNING, "Something wrong with minByDifficulty elements of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions

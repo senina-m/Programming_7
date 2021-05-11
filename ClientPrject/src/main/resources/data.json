@@ -1,19 +1,38 @@
-[ {
-  "creationDate" : "2021-04-13T01:07:01.889169",
-  "id" : 1681063883,
-  "name" : "new lab",
-  "coordinates" : {
-    "x" : 1,
-    "y" : 1
-  },
-  "minimalPoint" : 1.0,
-  "description" : "server-client programming lab",
-  "averagePoint" : 5,
-  "difficulty" : "HOPELESS",
-  "discipline" : {
-    "name" : "Programming",
-    "lectureHours" : 15,
-    "practiceHours" : 15,
-    "selfStudyHours" : 10000
-  }
-} ]
+{
+  "numberOfCollectionElements" : 2,
+  "labWorkList" : [ {
+    "creationDate" : "2021-05-11T00:11:16.148575",
+    "id" : 22,
+    "name" : "1",
+    "coordinates" : {
+      "x" : 1,
+      "y" : 11
+    },
+    "minimalPoint" : 1.0,
+    "description" : "1",
+    "averagePoint" : 1,
+    "discipline" : {
+      "name" : "1",
+      "lectureHours" : 1,
+      "practiceHours" : 1,
+      "selfStudyHours" : 1
+    }
+  }, {
+    "creationDate" : "2021-05-11T09:12:08.224206",
+    "id" : 23,
+    "name" : "1",
+    "coordinates" : {
+      "x" : 1,
+      "y" : 1
+    },
+    "minimalPoint" : 1.0,
+    "description" : "1",
+    "averagePoint" : 1,
+    "discipline" : {
+      "name" : "1",
+      "lectureHours" : 1,
+      "practiceHours" : 1,
+      "selfStudyHours" : 1
+    }
+  } ]
+}
