@@ -26,17 +26,28 @@ public class ClientNetConnector {
             }
             socketChannel = SocketChannel.open();
             socketChannel.configureBlocking(false);
-            socketChannel.register(selector, SelectionKey.OP_CONNECT | SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+            socketChannel.register(selector, SelectionKey.OP_CONNECT);
             socketChannel.connect(new InetSocketAddress(host, serverPort));
+//            if(){
+//                System.out.println("I have connected before loop!");
+//            }
             if (debug) {
-                System.out.println("DEBUG: Starting to connect!");
-            }
+                System.out.println("DEBUG: Starting to connect!");}
             while (true) {
+                if(debug){
+                    System.out.println("DEBUG: Before selector!");
+                }
                 selector.select();
+                if(debug){
+                    System.out.println("DEBUG: Selector selected!");
+                }
                 Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
                 while (keys.hasNext()) {
                     SelectionKey key = keys.next();
                     keys.remove();
+                    if(debug){
+                        System.out.println("DEBUG: Key: " + key.readyOps());
+                    }
                     if (key.isValid() && key.isConnectable()) {
                         SocketChannel channel = (SocketChannel) key.channel();
                         if (channel.isConnectionPending()) {
@@ -44,6 +55,7 @@ public class ClientNetConnector {
                             if (debug) {
                                 System.out.println("DEBUG: Finished to connect! Client is connected to server!");
                             }
+                            socketChannel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ);
                             return;
                         }
                         break;
@@ -67,6 +79,7 @@ public class ClientNetConnector {
 
 
     public void sendMessage(String msg) throws RefusedConnectionException{
+        msg = msg + "\n";
         if (debug) {
             System.out.println("DEBUG: Sending of a message started!");
         }

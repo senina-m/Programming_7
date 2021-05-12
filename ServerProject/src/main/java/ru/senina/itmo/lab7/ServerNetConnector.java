@@ -39,7 +39,9 @@ public class ServerNetConnector {
         String line = null;
         try {
             while(line == null) {
+                Logging.log(Level.ALL, "!!!!!!!!!!!!!!!!I'm reading!!!!!!!!!!!!!!!!!");
                 line = in.readLine();
+                Logging.log(Level.ALL, "!!!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!!!!");
                 attempts--;
                 if(attempts<0){
                     throw new TimeoutException("Reading time is out");
