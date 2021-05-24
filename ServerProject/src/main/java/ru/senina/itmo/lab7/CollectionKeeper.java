@@ -54,7 +54,7 @@ public class CollectionKeeper {
         } catch (DBProcessException e) {
             return "Element wasn't added to collection due to problems with data base!";
         } catch (Exception e) {
-            Logging.log(Level.WARNING, "Something wrong with adding element to collection. (Warning from collectionKeeper)" + e.getMessage());
+            ServerLog.log(Level.WARNING, "Something wrong with adding element to collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
             throw new RuntimeException("Something wrong with adding element to collection. (Warning from collectionKeeper) " + e.getMessage());
         }
@@ -75,7 +75,7 @@ public class CollectionKeeper {
             DBManager.clear(token);
             return "The collection was successfully cleared.";
         } catch (Exception e) {
-            Logging.log(Level.WARNING, "Something wrong with clearing of collection. (Warning from collectionKeeper)" + e.getMessage());
+            ServerLog.log(Level.WARNING, "Something wrong with clearing of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
             throw new RuntimeException("Something wrong with clearing of collection. (Warning from collectionKeeper) " + e.getMessage());
         }
@@ -96,7 +96,7 @@ public class CollectionKeeper {
             DBManager.removeGreater(element, token);
             return "All elements greater then entered were successfully removed.";
         } catch (Exception e) {
-            Logging.log(Level.WARNING, "Something wrong with removing_greater elements of collection. (Warning from collectionKeeper)" + e.getMessage());
+            ServerLog.log(Level.WARNING, "Something wrong with removing_greater elements of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
             throw new RuntimeException("Something wrong with removing_greater elements of collection. (Warning from collectionKeeper) " + e.getMessage());
         }
@@ -109,7 +109,7 @@ public class CollectionKeeper {
         } catch (IndexOutOfBoundsException e){
             throw e; //fixme костыль с перекидыванием ошибки
         } catch (Exception e) {
-            Logging.log(Level.WARNING, "Something wrong with minByDifficulty elements of collection. (Warning from collectionKeeper)" + e.getMessage());
+            ServerLog.log(Level.WARNING, "Something wrong with minByDifficulty elements of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
             throw new InvalidArgumentsException("No elements in collection. Can't choose the less by Difficulty.");
         }
@@ -119,7 +119,7 @@ public class CollectionKeeper {
         try {
             return DBManager.filterByDescription(description);
         } catch (Exception e) {
-            Logging.log(Level.WARNING, "Something wrong with filterByDescription of collection. (Warning from collectionKeeper)" + e.getMessage());
+            ServerLog.log(Level.WARNING, "Something wrong with filterByDescription of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
             throw new RuntimeException("Something wrong with filterByDescription of collection. (Warning from collectionKeeper) " + e.getMessage());
         }
@@ -131,7 +131,7 @@ public class CollectionKeeper {
         try {
             return DBManager.getSortedList();
         } catch (Exception e) {
-            Logging.log(Level.WARNING, "Something wrong with getSortedList of collection. (Warning from collectionKeeper)" + e.getMessage());
+            ServerLog.log(Level.WARNING, "Something wrong with getSortedList of collection. (Warning from collectionKeeper)" + e.getMessage());
             //todo: possess different exceptions
             throw new RuntimeException("Something wrong with getSortedList of collection. (Warning from collectionKeeper) " + e.getMessage());
         }

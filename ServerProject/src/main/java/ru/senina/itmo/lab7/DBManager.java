@@ -65,7 +65,7 @@ public class DBManager {
                 transaction.rollback();
             }
             //TODO: check already exists exception
-            Logging.log(Level.WARNING, "There were some exceptions during adding Element. " + ex.getMessage());
+            ServerLog.log(Level.WARNING, "There were some exceptions during adding Element. " + ex.getMessage());
             throw new DBProcessException();
         } finally {
             manager.close();
@@ -93,7 +93,7 @@ public class DBManager {
                 transaction.rollback();
             }
             //TODO: check exceptions
-            Logging.log(Level.WARNING, "There were some exceptions during readingAllElements Element. " + ex.getMessage());
+            ServerLog.log(Level.WARNING, "There were some exceptions during readingAllElements Element. " + ex.getMessage());
         } finally {
             manager.close();
         }
@@ -118,7 +118,7 @@ public class DBManager {
                 transaction.rollback();
             }
             //TODO: check exceptions (if there was no such element?
-            Logging.log(Level.WARNING, "There were some exceptions during removing element by id. " + ex.getMessage());
+            ServerLog.log(Level.WARNING, "There were some exceptions during removing element by id. " + ex.getMessage());
         } finally {
             manager.close();
         }

@@ -19,8 +19,7 @@ public class TerminalKeeper {
     private boolean script = false;
     private Map<String, String[]> commands;
     private final String filename;
-    private final boolean debug = false;
-    //ClientMain.DEBUG;
+    private final boolean debug = true;
 
 
     public TerminalKeeper(String filename) {
@@ -191,7 +190,6 @@ public class TerminalKeeper {
             CommandArgs testCommandRegistration = new CommandArgs();
             testCommandRegistration.setArgs(new String[]{"authorize", "nan", encrypt("nan")});
             testCommandRegistration.setCommandName("authorize");
-//            testCommandRegistration.setCommandName("register");
             return testCommandRegistration;
         } else {
             System.out.print("Do you have an account or you to register? Type \"sign in\" or \"log in\".\n >");
@@ -242,20 +240,22 @@ public class TerminalKeeper {
     }
 
     private String getPassword() {
-//        //fixme не работает Console при запуске в ide (в терминале должно работать, но я не проверяла)
-//        Console console = System.console();
-//        String password = new String(console.readPassword("Please enter your password: ")).trim();
-//        while (password.equals("")) {
-//            password = new String(console.readPassword("You entered empty password! Please try again: ")).trim();
-//        }
-//        return password;
-        System.out.print("Please enter your password: ");
-        String password = new String(in.nextLine()).trim();
-        while (password.equals("")) {
-            System.out.print("You entered empty password! Please try again: ");
-            password = new String(in.nextLine()).trim();
+        if (debug) {
+            System.out.print("Please enter your password: ");
+            String password = new String(in.nextLine()).trim();
+            while (password.equals("")) {
+                System.out.print("You entered empty password! Please try again: ");
+                password = new String(in.nextLine()).trim();
+            }
+            return password;
+        } else {
+            Console console = System.console();
+            String password = new String(console.readPassword("Please enter your password: ")).trim();
+            while (password.equals("")) {
+                password = new String(console.readPassword("You entered empty password! Please try again: ")).trim();
+            }
+            return password;
         }
-        return password;
     }
 
     private String encrypt(String password) {

@@ -12,7 +12,10 @@ public class ServerKeeper {
     }
 
     public void start(int serverPort) {
-        Logging.log(Level.INFO, "Keeper was started.");
+//        ServerLog.log(Level.INFO, "Keeper was started.");
+//        ServerLog.log(Level.INFO, " Log test INFO");
+//        ServerLog.log(Level.SEVERE, " Log test SEVERE");
+//        ServerLog.log(Level.WARNING, " Log test WARNING");
         ExecutorService readThreads = Executors.newCachedThreadPool();
         ExecutorService processThreads = Executors.newCachedThreadPool();
         Controller controller = new Controller(new Model());
@@ -28,7 +31,7 @@ public class ServerKeeper {
                 //fixme нужно ли тут усыплять поток на какое-то время, чтобы не грузить процессор?
             }
             readThreads.execute(readingTask);
-            Logging.log(Level.INFO, "readThreads was executed for readingTask");
+            ServerLog.log(Level.INFO, "readThreads was executed for readingTask");
         }
         try {
             readThreads.shutdown();
@@ -36,7 +39,7 @@ public class ServerKeeper {
             processThreads.shutdown();
             processThreads.awaitTermination(3, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            Logging.log(Level.WARNING, "Termination error " + e.toString());
+            ServerLog.log(Level.WARNING, "Termination error " + e.toString());
         }
     }
 

@@ -22,9 +22,9 @@ public class Controller {
         //Todo: обработка команды
         if (strCommand != null) {
             CommandArgs commandArgs = commandArgsParser.fromStringToObject(strCommand);
-            Logging.log(Level.INFO, "New command '" + commandArgs.getCommandName() + "' was read.");
+            ServerLog.log(Level.INFO, "New command '" + commandArgs.getCommandName() + "' was read.");
             CommandResponse commandResponse = model.run(commandArgs);
-            Logging.log(Level.INFO, "Command '" + commandResponse.getCommandName() + "' was executed.");
+            ServerLog.log(Level.INFO, "Command '" + commandResponse.getCommandName() + "' was executed.");
             return commandResponseParser.fromObjectToString(commandResponse);
         }else {
             return commandResponseParser.fromObjectToString(new CommandResponse(Status.NULLABLE_COMMAND, "none", "Command came to server invalid!"));

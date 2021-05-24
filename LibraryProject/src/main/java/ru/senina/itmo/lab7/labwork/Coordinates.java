@@ -25,7 +25,7 @@ public class Coordinates implements Serializable {
     @Column(name = "coordinates_y")
     private long y; //Значение поля должно быть больше -47
 
-    @Setter //TODO: check serialization
+    @Setter
     @OneToOne
     @MapsId
     @JoinColumn(name = "coordinates_id")

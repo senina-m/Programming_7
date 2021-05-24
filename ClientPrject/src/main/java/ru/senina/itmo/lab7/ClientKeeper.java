@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 /**
  * Class to deal with input and output and keep CollectionKeeper class instance.
@@ -155,9 +156,7 @@ public class ClientKeeper {
                 try {
                     TimeUnit.SECONDS.sleep(delay);
                 } catch (InterruptedException ex) {
-                    if (debug) {
-                        System.out.println("DEBUG: EXCEPTION in tryToConnect " + ex.toString());
-                    }
+                    ClientLog.log(Level.WARNING, "EXCEPTION in tryToConnect " + ex.toString());
                 }
             }
         }

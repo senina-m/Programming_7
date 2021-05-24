@@ -1,5 +1,5 @@
 {
-  "numberOfCollectionElements" : 2,
+  "numberOfCollectionElements" : 3,
   "labWorkList" : [ {
     "creationDate" : "2021-05-11T00:11:16.148575",
     "id" : 22,
@@ -33,6 +33,23 @@
       "lectureHours" : 1,
       "practiceHours" : 1,
       "selfStudyHours" : 1
+    }
+  }, {
+    "creationDate" : "2021-05-11T20:00:25.752602",
+    "id" : 24,
+    "name" : "My awfull lab",
+    "coordinates" : {
+      "x" : 0,
+      "y" : 0
+    },
+    "minimalPoint" : 1.0,
+    "description" : "7 programming lab (with *** nio)",
+    "averagePoint" : 2,
+    "discipline" : {
+      "name" : "Programming",
+      "lectureHours" : 16,
+      "practiceHours" : 32,
+      "selfStudyHours" : 1000
     }
   } ]
 }

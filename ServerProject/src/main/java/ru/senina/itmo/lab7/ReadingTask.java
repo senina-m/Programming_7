@@ -18,12 +18,12 @@ public class ReadingTask implements Runnable {
     @Override
     public void run() {
         try {
-            Logging.log(Level.INFO, "The Reading task is in!");
+            ServerLog.log(Level.INFO, "The Reading task is in!");
             final String command = net.receiveMessage(1);
             processingTask.setCommand(command);
             processThreads.execute(processingTask);
         } catch (TimeoutException e) {
-            Logging.log(Level.WARNING, "Amount of attempts to read next command is out.");
+            ServerLog.log(Level.WARNING, "Amount of attempts to read next command is out.");
         }
     }
 

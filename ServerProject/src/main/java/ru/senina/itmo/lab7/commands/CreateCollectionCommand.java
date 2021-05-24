@@ -43,7 +43,7 @@ public class CreateCollectionCommand extends Command {
                 collectionKeeper.add(element, getToken());
             }
         } catch (ParsingException e) {
-            Logging.log(Level.WARNING, "Collection file was incorrect, collection wasn't updated with start values.");
+            ServerLog.log(Level.WARNING, "Collection file was incorrect, collection wasn't updated with start values.");
             return new CommandResponse(Status.PROBLEM_PROCESSED, getName(), "File was incorrect, collection will be empty!");
         }
         if (collectionKeeper.getList() != null) {

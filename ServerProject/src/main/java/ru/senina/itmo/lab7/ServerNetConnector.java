@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
@@ -25,7 +23,7 @@ public class ServerNetConnector {
             clientSocket = serverSocket.accept();
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            Logging.log(Level.INFO, "Connection was accepted.");
+            ServerLog.log(Level.INFO, "Connection was accepted.");
             return true;
         } catch (IOException e){
             //TODO: обработать ошибки UnknownHostException отдельно?
@@ -39,26 +37,26 @@ public class ServerNetConnector {
         String line = null;
         try {
             while(line == null) {
-                Logging.log(Level.ALL, "!!!!!!!!!!!!!!!!I'm reading!!!!!!!!!!!!!!!!!");
+                ServerLog.log(Level.ALL, "!!!!!!!!!!!!!!!!I'm reading!!!!!!!!!!!!!!!!!");
                 line = in.readLine();
-                Logging.log(Level.ALL, "!!!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!!!!");
+                ServerLog.log(Level.ALL, "!!!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!!!!");
                 attempts--;
                 if(attempts<0){
                     throw new TimeoutException("Reading time is out");
                 }
             }
         } catch (IOException e){
-            Logging.log(Level.WARNING, "Exception during nextCommand. " + e.getLocalizedMessage());
+            ServerLog.log(Level.WARNING, "Exception during nextCommand. " + e.getLocalizedMessage());
             throw new RuntimeException(e);
         }
-        Logging.log(Level.INFO, "Received message: '" + line + "'.");
+        ServerLog.log(Level.INFO, "Received message: '" + line + "'.");
         return line;
     }
 
     public void sendResponse(String str){
         byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
         out.println(str);
-        Logging.log(Level.INFO, "Message '" + str + "' was send. Length " + bytes.length);
+        ServerLog.log(Level.INFO, "Message '" + str + "' was send. Length " + bytes.length);
     }
 
     public void stopConnection() {
@@ -67,9 +65,9 @@ public class ServerNetConnector {
             out.close();
             clientSocket.close();
             serverSocket.close();
-            Logging.log(Level.INFO, "Connection was closed.");
+            ServerLog.log(Level.INFO, "Connection was closed.");
         } catch (IOException e){
-            Logging.log(Level.WARNING, "Failed to stopConnection");
+            ServerLog.log(Level.WARNING, "Failed to stopConnection");
         }
     }
 

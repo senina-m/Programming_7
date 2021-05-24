@@ -4,7 +4,6 @@ import ru.senina.itmo.lab7.*;
 
 import java.util.Optional;
 
-//todo: дописать в аннатацию параметры для этой команды
 @CommandAnnotation(name = "authorize", isVisibleInHelp = false)
 public class AuthorizeCommand extends Command{
     private String login;
@@ -20,7 +19,7 @@ public class AuthorizeCommand extends Command{
             String token = Optional.ofNullable(DBManager.refreshToken(login, password)).orElseThrow(RuntimeException::new);
             return new CommandResponse(Status.OK, getName(), token);
         }catch (Exception e){
-            //todo: write table with exceptions values
+            //todo: catch different exceptions
             return new CommandResponse(Status.REGISTRATION_FAIL, getName(), "Something wrong with refreshing token in authorize command!" );
         }
     }
@@ -39,7 +38,5 @@ public class AuthorizeCommand extends Command{
     }
 
     @Override
-    protected void checkIfLogin() throws UnLoginUserException {
-        //todo: this command shouldn't check if user is login
-    }
+    protected void checkIfLogin() throws UnLoginUserException {}
 }

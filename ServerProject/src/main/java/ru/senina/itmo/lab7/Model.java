@@ -25,7 +25,7 @@ public class Model {
                 command.setParser(COLLECTION_PARSER);
             }
         }
-        Logging.log(Level.INFO, commandArgs.getCommandName() + " command's arguments was copied.");
+        ServerLog.log(Level.INFO, commandArgs.getCommandName() + " command's arguments was copied.");
         return command.run();
     }
 

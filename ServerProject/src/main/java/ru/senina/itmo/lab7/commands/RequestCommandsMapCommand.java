@@ -23,7 +23,7 @@ public class RequestCommandsMapCommand extends CommandWithoutArgs{
     protected CommandResponse doRun() {
         Map<String, String[]> commandArgsList = createCommandsArgsMap(map);
         try {
-            String strMapOfCommands = new JsonParser<SetOfCommands>(new ObjectMapper(), SetOfCommands.class).fromObjectToString(new SetOfCommands(commandArgsList));
+            String strMapOfCommands = new JsonParser<>(new ObjectMapper(), SetOfCommands.class).fromObjectToString(new SetOfCommands(commandArgsList));
             return new CommandResponse(Status.OK, getName(), strMapOfCommands);
         } catch (ParsingException e){
             return new CommandResponse(Status.PARSER_EXCEPTION, getName(), "Problems with parsing set of commands");
@@ -32,12 +32,10 @@ public class RequestCommandsMapCommand extends CommandWithoutArgs{
 
     private static Map<String, String[]> createCommandsArgsMap(Map<String, Command> map) {
         Map<String, String[]> commandsArgsMap = new HashMap<>();
-        for (Command command : map.values()) {
-            //todo: добавлять не все команды
-            //todo: переписать на стримы, надо их уже наконец осваивать
+        map.values().forEach(command -> {
             if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
                 CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
-                if(annotation.isVisibleInHelp()) {
+                if (annotation.isVisibleInHelp()) {
                     if (annotation.element()) {
                         commandsArgsMap.put(annotation.name(), new String[]{"element"});
                     } else {
@@ -45,7 +43,7 @@ public class RequestCommandsMapCommand extends CommandWithoutArgs{
                     }
                 }
             }
-        }
+        });
         return commandsArgsMap;
     }
 }
